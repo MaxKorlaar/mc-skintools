@@ -1,20 +1,18 @@
 <?php
+   /*
+    * Get a GIF of a rotating Minecraft skin. Uses the moreMCavatar class.
+    */
     ini_set('display_errors', 1); // My webserver defaults to false.
-
     require_once('includes/moreMCavatar.php');
-
     $avatar = new moreMCavatar();
-
     if (!isset($_GET['username'])) {
         die("No username was given :(");
     }
     if (!isset($_GET['size'])) {
         die("No size was given :( ");
     }
-
     $username = $_GET['username'];
     $size     = (int)$_GET['size'];
-
     if ($size > 25) {
         die("Sorry, this is too big :)");
     }
