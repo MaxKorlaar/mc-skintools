@@ -1,7 +1,9 @@
 <?php
-   /*
-    * Get a GIF of a rotating Minecraft skin. Uses the moreMCavatar class.
-    */
+   /**
+   * @author Max Korlaar
+   * Get a GIF of a rotating Minecraft skin. Uses the moreMCavatar class.
+   * Requests data from GET and creates a new moreMCavatar instance, which will do the rest of it.
+   */
     ini_set('display_errors', 1); // My webserver defaults to false.
     require_once('includes/moreMCavatar.php');
     $avatar = new moreMCavatar();
