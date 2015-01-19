@@ -8,15 +8,15 @@
     require_once('includes/moreMCavatar.php');
     $avatar = new moreMCavatar();
     if (!isset($_GET['username'])) {
-        die("No username was given :(");
+        die("Please supply an username using GET; Example: thisistheurl/?username=[username]");
     }
     if (!isset($_GET['size'])) {
-        die("No size was given :( ");
+        die("Please supply a size using GET; Example: thisistheurl/?username=[username]&size=[size]");
     }
     $username = $_GET['username'];
     $size     = (int)$_GET['size'];
-    if ($size > 25) {
-        die("Sorry, this is too big :)");
+    if ($size > 25) { // If you have a load of resources on your server or whatever, you may increase this maximum size.
+        die("Sizes greater than 25 are not allowed right now.");
     }
 
     $speed    = 3;
