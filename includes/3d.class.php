@@ -11,15 +11,15 @@
      * - Skins are taken from the minecraftAvatar class by Max Korlaar, instead of directly from Mojang.
      * This reduces the need of redownloading skins.
      * - Some typos and other small errors.
+     * - Removed script duration functions, those are not needed.
      */
     error_reporting(E_ERROR);
-    /*error_reporting(E_ALL);
-    ini_set("display_errors", 1);*/
 
     /* Start Global variables
      * These variabals are shared over multiple classes
      */
     $seconds_to_cache = 60 * 60 * 24 * 7; // Cache duration sent to the browser.
+    // Not used
 
     // Cosine and Sine values
     $cos_alpha = null;
@@ -42,9 +42,7 @@
         private $playerName = null;
         private $playerSkin = false;
         private $isNewSkinType = false;
-
         private $hd_ratio = 1;
-
         private $vR = null;
         private $hR = null;
         private $hrh = null;
@@ -58,7 +56,6 @@
         private $ratio = null;
         private $aa = null;
         private $layers = null;
-
         // Rotation variables in radians (3D Rendering)
         private $alpha = null; // Vertical rotation on the X axis.
         private $omega = null; // Horizontal rotation on the Y axis.
@@ -95,17 +92,10 @@
             $this->layers       = ($layers == 'true');
         }
 
-        /* Function can be used for tracking script duration
+        /**
+         * Checks if given string is an UUID
          *
-         */
-        private function microtime_float() {
-            list($usec, $sec) = explode(" ", microtime());
-            return ((float)$usec + (float)$sec);
-        }
-
-        /* Function checs if given string is an UUID
-         *
-         * Return true or false
+         * @return true or false
          */
         private function isUUID($candidate) {
             return preg_match('/^[0-9A-Za-z]{8}(-[0-9A-Za-z]{4}){3}-[0-9A-Za-z]{12}$/', $candidate);
