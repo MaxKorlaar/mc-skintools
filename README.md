@@ -1,4 +1,7 @@
 # mc-3dskin
+_Everything in this branch will be automatically deployed on the testing website_
+
+
 My own scripts plus enhanced versions of some scripts I've found.
 
 More info: hypixel.net/threads/tool-skin-rot8or-generate-gifs.228872/
