@@ -2,7 +2,7 @@
 _Everything in this branch will be periodically testing website_
 
 
-![http://hypixel.maxkorlaar.com/other/get-3d-skin/MegaMaxsterful/18](http://hypixel.maxkorlaar.com/other/get-3d-skin/MegaMaxsterful/18)
+![http://hypixel.maxkorlaar.com/other/get-3d-skin/MegaMaxsterful/13](http://hypixel.maxkorlaar.com/other/get-3d-skin/MegaMaxsterful/13)
 
 
 My own scripts plus enhanced versions of some scripts I've found.
