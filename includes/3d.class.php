@@ -6,12 +6,13 @@
      * Translations done by Carlos Ferreira.
      * Later adapted by Gijs "Gyzie" Oortgiese (http://www.gijsoortgiese.com/). Started on the 6st of July 2014.
      * Fixing various issues.
-     * Modified by Max Korlaar:
+     * Now modified by Max Korlaar (24th of January 2015):
      * - GET requests removed
      * - Skins are taken from the minecraftAvatar class by Max Korlaar, instead of directly from Mojang.
      * This reduces the need of redownloading skins.
      * - Some typos and other small errors.
      * - Removed script duration functions, those are not needed.
+     * - Changed array syntax.
      */
     error_reporting(E_ERROR);
 
@@ -37,6 +38,9 @@
      *
      */
 
+    /**
+     * Class render3DPlayer
+     */
     class render3DPlayer {
         private $fallback_img = 'http://www.minecraft.net/skin/char.png'; // Use a not found skin whenever something goes wrong.
         private $playerName = null;
@@ -60,7 +64,7 @@
         private $alpha = null; // Vertical rotation on the X axis.
         private $omega = null; // Horizontal rotation on the Y axis.
 
-        private $members_angles = array(); // Head, Helmet, Torso, Arms, Legs
+        private $members_angles = []; // Head, Helmet, Torso, Arms, Legs
 
         private $visible_faces_format = null;
         private $visible_faces = null;
@@ -75,6 +79,22 @@
 
         private $times = null;
 
+        /**
+         * @param $user
+         * @param $vr
+         * @param $hr
+         * @param $hrh
+         * @param $vrll
+         * @param $vrrl
+         * @param $vrla
+         * @param $vrra
+         * @param $displayHair
+         * @param $headOnly
+         * @param $format
+         * @param $ratio
+         * @param $aa
+         * @param $layers
+         */
         public function __construct($user, $vr, $hr, $hrh, $vrll, $vrrl, $vrla, $vrra, $displayHair, $headOnly, $format, $ratio, $aa, $layers) {
             $this->playerName   = $user;
             $this->vR           = $vr;
@@ -95,6 +115,8 @@
         /**
          * Checks if given string is an UUID
          *
+         * @param $candidate
+         *
          * @return true or false
          */
         private function isUUID($candidate) {
@@ -105,6 +127,11 @@
          *
          * Espects an UUID.
          * Returns player skin texure link, false on failure
+         */
+        /**
+         * @param $UUID
+         *
+         * @return bool
          */
         private function getSkinURLViaUUIDViaMojang($UUID) {
             $convertedUUID        = str_replace('-', '', $UUID);
@@ -142,6 +169,9 @@
          * Espects an UUID or a name
          * returns a player skin link
          */
+        /**
+         * @return bool|string
+         */
         private function getSkinURL() {
             if ($this->isUUID($this->playerName)) {
                 $result = $this->getSkinURLViaUUIDViaMojang($this->playerName);
@@ -155,6 +185,9 @@
         /* Function grabs the player skin from the Mojang server and checks it.
          *
          * Returns true on success, false on failure.
+         */
+        /**
+         * @return bool
          */
         private function getPlayerSkin() {
             if (trim($this->playerName) == '') {
@@ -185,6 +218,11 @@
 
         /* Function renders the 3d image
          *
+         */
+        /**
+         * @param string $output
+         *
+         * @return resource|string
          */
         public function get3DRender($output = 'return') {
             global $minX, $maxX, $minY, $maxY;
@@ -302,6 +340,9 @@
          * Espects an image.
          * Returns a croped image.
          */
+        /**
+         * @return bool
+         */
         private function cropToOldSkinFormat() {
             if (imagesx($this->playerSkin) !== imagesy($this->playerSkin)) {
                 return $this->playerSkin;
@@ -350,57 +391,57 @@
             $cos_omega = cos($this->omega);
             $sin_omega = sin($this->omega);
 
-            $this->members_angles['torso'] = array(
+            $this->members_angles['torso']    = [
                 'cos_alpha' => cos(0),
                 'sin_alpha' => sin(0),
                 'cos_omega' => cos(0),
                 'sin_omega' => sin(0)
-            );
+            ];
 
             $alpha_head                   = 0;
             $omega_head                   = deg2rad($this->hrh);
-            $this->members_angles['head'] = $this->members_angles['helmet'] = array( // Head and helmet get the same calculations
+            $this->members_angles['head']     = $this->members_angles['helmet'] = [ // Head and helmet get the same calculations
                 'cos_alpha' => cos($alpha_head),
                 'sin_alpha' => sin($alpha_head),
                 'cos_omega' => cos($omega_head),
                 'sin_omega' => sin($omega_head)
-            );
+            ];
 
             $alpha_right_arm                  = deg2rad($this->vrra);
             $omega_right_arm                  = 0;
-            $this->members_angles['rightArm'] = array(
+            $this->members_angles['rightArm'] = [
                 'cos_alpha' => cos($alpha_right_arm),
                 'sin_alpha' => sin($alpha_right_arm),
                 'cos_omega' => cos($omega_right_arm),
                 'sin_omega' => sin($omega_right_arm)
-            );
+            ];
 
             $alpha_left_arm                  = deg2rad($this->vrla);
             $omega_left_arm                  = 0;
-            $this->members_angles['leftArm'] = array(
+            $this->members_angles['leftArm']  = [
                 'cos_alpha' => cos($alpha_left_arm),
                 'sin_alpha' => sin($alpha_left_arm),
                 'cos_omega' => cos($omega_left_arm),
                 'sin_omega' => sin($omega_left_arm)
-            );
+            ];
 
             $alpha_right_leg                  = deg2rad($this->vrrl);
             $omega_right_leg                  = 0;
-            $this->members_angles['rightLeg'] = array(
+            $this->members_angles['rightLeg'] = [
                 'cos_alpha' => cos($alpha_right_leg),
                 'sin_alpha' => sin($alpha_right_leg),
                 'cos_omega' => cos($omega_right_leg),
                 'sin_omega' => sin($omega_right_leg)
-            );
+            ];
 
             $alpha_left_leg                  = deg2rad($this->vrll);
             $omega_left_leg                  = 0;
-            $this->members_angles['leftLeg'] = array(
+            $this->members_angles['leftLeg']  = [
                 'cos_alpha' => cos($alpha_left_leg),
                 'sin_alpha' => sin($alpha_left_leg),
                 'cos_omega' => cos($omega_left_leg),
                 'sin_omega' => sin($omega_left_leg)
-            );
+            ];
             $minX                            = 0;
             $maxX                            = 0;
             $minY                            = 0;
@@ -411,28 +452,28 @@
          *
          */
         private function facesDetermination() {
-            $this->visible_faces_format = array(
-                'front' => array(),
-                'back'  => array()
-            );
+            $this->visible_faces_format = [
+                'front' => [],
+                'back'  => []
+            ];
 
-            $this->visible_faces = array(
+            $this->visible_faces = [
                 'head'     => $this->visible_faces_format,
                 'torso'    => $this->visible_faces_format,
                 'rightArm' => $this->visible_faces_format,
                 'leftArm'  => $this->visible_faces_format,
                 'rightLeg' => $this->visible_faces_format,
                 'leftLeg'  => $this->visible_faces_format
-            );
+            ];
 
-            $this->all_faces = array(
+            $this->all_faces = [
                 'back',
                 'right',
                 'top',
                 'front',
                 'left',
                 'bottom'
-            );
+            ];
 
             // Loop each preProject and Project then calculate the visible faces for each - also display
             foreach ($this->visible_faces as $k => &$v) {
@@ -480,118 +521,118 @@
          *
          */
         private function setCubePoints() {
-            $this->cube_points   = array();
-            $this->cube_points[] = array(
-                new Point(array(
+            $this->cube_points   = [];
+            $this->cube_points[] = [
+                new Point([
                     'x' => 0,
                     'y' => 0,
                     'z' => 0
-                )), array(
+                ]), [
                     'back',
                     'right',
                     'top'
-                )); // 0
+                ]]; // 0
 
-            $this->cube_points[] = array(
-                new Point(array(
+            $this->cube_points[] = [
+                new Point([
                     'x' => 0,
                     'y' => 0,
                     'z' => 1
-                )), array(
+                ]), [
                     'front',
                     'right',
                     'top'
-                )); // 1
+                ]]; // 1
 
-            $this->cube_points[] = array(
-                new Point(array(
+            $this->cube_points[] = [
+                new Point([
                     'x' => 0,
                     'y' => 1,
                     'z' => 0
-                )), array(
+                ]), [
                     'back',
                     'right',
                     'bottom'
-                )); // 2
+                ]]; // 2
 
-            $this->cube_points[] = array(
-                new Point(array(
+            $this->cube_points[] = [
+                new Point([
                     'x' => 0,
                     'y' => 1,
                     'z' => 1
-                )), array(
+                ]), [
                     'front',
                     'right',
                     'bottom'
-                )); // 3
+                ]]; // 3
 
-            $this->cube_points[] = array(
-                new Point(array(
+            $this->cube_points[] = [
+                new Point([
                     'x' => 1,
                     'y' => 0,
                     'z' => 0
-                )), array(
+                ]), [
                     'back',
                     'left',
                     'top'
-                )); // 4
+                ]]; // 4
 
-            $this->cube_points[] = array(
-                new Point(array(
+            $this->cube_points[] = [
+                new Point([
                     'x' => 1,
                     'y' => 0,
                     'z' => 1
-                )), array(
+                ]), [
                     'front',
                     'left',
                     'top'
-                )); // 5
+                ]]; // 5
 
-            $this->cube_points[] = array(
-                new Point(array(
+            $this->cube_points[] = [
+                new Point([
                     'x' => 1,
                     'y' => 1,
                     'z' => 0
-                )), array(
+                ]), [
                     'back',
                     'left',
                     'bottom'
-                )); // 6
+                ]]; // 6
 
-            $this->cube_points[] = array(
-                new Point(array(
+            $this->cube_points[] = [
+                new Point([
                     'x' => 1,
                     'y' => 1,
                     'z' => 1
-                )), array(
+                ]), [
                     'front',
                     'left',
                     'bottom'
-                )); // 7
+                ]]; // 7
         }
 
         /* Function generates polygons
          *
          */
         private function generatePolygons() {
-            $depths_of_face   = array();
-            $this->polygons   = array();
-            $cube_faces_array = array('front'  => array(),
-                                      'back'   => array(),
-                                      'top'    => array(),
-                                      'bottom' => array(),
-                                      'right'  => array(),
-                                      'left'   => array()
-            );
+            $depths_of_face   = [];
+            $this->polygons   = [];
+            $cube_faces_array = ['front'  => [],
+                                 'back'   => [],
+                                 'top'    => [],
+                                 'bottom' => [],
+                                 'right'  => [],
+                                 'left'   => []
+            ];
 
-            $this->polygons = array('helmet'   => $cube_faces_array,
+            $this->polygons = ['helmet'        => $cube_faces_array,
                                     'head'     => $cube_faces_array,
                                     'torso'    => $cube_faces_array,
                                     'rightArm' => $cube_faces_array,
                                     'leftArm'  => $cube_faces_array,
                                     'rightLeg' => $cube_faces_array,
                                     'leftLeg'  => $cube_faces_array
-            );
+            ];
 
             $hd_ratio = $this->hd_ratio;
             $img_png  = $this->playerSkin;
@@ -600,473 +641,473 @@
             for ($i = 0; $i < 9 * $hd_ratio; $i++) {
                 for ($j = 0; $j < 9 * $hd_ratio; $j++) {
                     if (!isset($volume_points[$i][$j][-2 * $hd_ratio])) {
-                        $volume_points[$i][$j][-2 * $hd_ratio] = new Point(array(
+                        $volume_points[$i][$j][-2 * $hd_ratio] = new Point([
                             'x' => $i,
                             'y' => $j,
                             'z' => -2 * $hd_ratio
-                        ));
+                        ]);
                     }
                     if (!isset($volume_points[$i][$j][6 * $hd_ratio])) {
-                        $volume_points[$i][$j][6 * $hd_ratio] = new Point(array(
+                        $volume_points[$i][$j][6 * $hd_ratio] = new Point([
                             'x' => $i,
                             'y' => $j,
                             'z' => 6 * $hd_ratio
-                        ));
+                        ]);
                     }
                 }
             }
             for ($j = 0; $j < 9 * $hd_ratio; $j++) {
                 for ($k = -2 * $hd_ratio; $k < 7 * $hd_ratio; $k++) {
                     if (!isset($volume_points[0][$j][$k])) {
-                        $volume_points[0][$j][$k] = new Point(array(
+                        $volume_points[0][$j][$k] = new Point([
                             'x' => 0,
                             'y' => $j,
                             'z' => $k
-                        ));
+                        ]);
                     }
                     if (!isset($volume_points[8 * $hd_ratio][$j][$k])) {
-                        $volume_points[8 * $hd_ratio][$j][$k] = new Point(array(
+                        $volume_points[8 * $hd_ratio][$j][$k] = new Point([
                             'x' => 8 * $hd_ratio,
                             'y' => $j,
                             'z' => $k
-                        ));
+                        ]);
                     }
                 }
             }
             for ($i = 0; $i < 9 * $hd_ratio; $i++) {
                 for ($k = -2 * $hd_ratio; $k < 7 * $hd_ratio; $k++) {
                     if (!isset($volume_points[$i][0][$k])) {
-                        $volume_points[$i][0][$k] = new Point(array(
+                        $volume_points[$i][0][$k] = new Point([
                             'x' => $i,
                             'y' => 0,
                             'z' => $k
-                        ));
+                        ]);
                     }
                     if (!isset($volume_points[$i][8 * $hd_ratio][$k])) {
-                        $volume_points[$i][8 * $hd_ratio][$k] = new Point(array(
+                        $volume_points[$i][8 * $hd_ratio][$k] = new Point([
                             'x' => $i,
                             'y' => 8 * $hd_ratio,
                             'z' => $k
-                        ));
+                        ]);
                     }
                 }
             }
             for ($i = 0; $i < 8 * $hd_ratio; $i++) {
                 for ($j = 0; $j < 8 * $hd_ratio; $j++) {
-                    $this->polygons['head']['back'][]  = new Polygon(array(
+                    $this->polygons['head']['back'][]  = new Polygon([
                         $volume_points[$i][$j][-2 * $hd_ratio],
                         $volume_points[$i + 1][$j][-2 * $hd_ratio],
                         $volume_points[$i + 1][$j + 1][-2 * $hd_ratio],
                         $volume_points[$i][$j + 1][-2 * $hd_ratio]
-                    ), imagecolorat($img_png, (32 * $hd_ratio - 1) - $i, 8 * $hd_ratio + $j));
-                    $this->polygons['head']['front'][] = new Polygon(array(
+                    ], imagecolorat($img_png, (32 * $hd_ratio - 1) - $i, 8 * $hd_ratio + $j));
+                    $this->polygons['head']['front'][] = new Polygon([
                         $volume_points[$i][$j][6 * $hd_ratio],
                         $volume_points[$i + 1][$j][6 * $hd_ratio],
                         $volume_points[$i + 1][$j + 1][6 * $hd_ratio],
                         $volume_points[$i][$j + 1][6 * $hd_ratio]
-                    ), imagecolorat($img_png, 8 * $hd_ratio + $i, 8 * $hd_ratio + $j));
+                    ], imagecolorat($img_png, 8 * $hd_ratio + $i, 8 * $hd_ratio + $j));
                 }
             }
             for ($j = 0; $j < 8 * $hd_ratio; $j++) {
                 for ($k = -2 * $hd_ratio; $k < 6 * $hd_ratio; $k++) {
-                    $this->polygons['head']['right'][] = new Polygon(array(
+                    $this->polygons['head']['right'][] = new Polygon([
                         $volume_points[0][$j][$k],
                         $volume_points[0][$j][$k + 1],
                         $volume_points[0][$j + 1][$k + 1],
                         $volume_points[0][$j + 1][$k]
-                    ), imagecolorat($img_png, $k + 2 * $hd_ratio, 8 * $hd_ratio + $j));
-                    $this->polygons['head']['left'][]  = new Polygon(array(
+                    ], imagecolorat($img_png, $k + 2 * $hd_ratio, 8 * $hd_ratio + $j));
+                    $this->polygons['head']['left'][]  = new Polygon([
                         $volume_points[8 * $hd_ratio][$j][$k],
                         $volume_points[8 * $hd_ratio][$j][$k + 1],
                         $volume_points[8 * $hd_ratio][$j + 1][$k + 1],
                         $volume_points[8 * $hd_ratio][$j + 1][$k]
-                    ), imagecolorat($img_png, (24 * $hd_ratio - 1) - $k - 2 * $hd_ratio, 8 * $hd_ratio + $j));
+                    ], imagecolorat($img_png, (24 * $hd_ratio - 1) - $k - 2 * $hd_ratio, 8 * $hd_ratio + $j));
                 }
             }
             for ($i = 0; $i < 8 * $hd_ratio; $i++) {
                 for ($k = -2 * $hd_ratio; $k < 6 * $hd_ratio; $k++) {
-                    $this->polygons['head']['top'][]    = new Polygon(array(
+                    $this->polygons['head']['top'][]    = new Polygon([
                         $volume_points[$i][0][$k],
                         $volume_points[$i + 1][0][$k],
                         $volume_points[$i + 1][0][$k + 1],
                         $volume_points[$i][0][$k + 1]
-                    ), imagecolorat($img_png, 8 * $hd_ratio + $i, $k + 2 * $hd_ratio));
-                    $this->polygons['head']['bottom'][] = new Polygon(array(
+                    ], imagecolorat($img_png, 8 * $hd_ratio + $i, $k + 2 * $hd_ratio));
+                    $this->polygons['head']['bottom'][] = new Polygon([
                         $volume_points[$i][8 * $hd_ratio][$k],
                         $volume_points[$i + 1][8 * $hd_ratio][$k],
                         $volume_points[$i + 1][8 * $hd_ratio][$k + 1],
                         $volume_points[$i][8 * $hd_ratio][$k + 1]
-                    ), imagecolorat($img_png, 16 * $hd_ratio + $i, 2 * $hd_ratio + $k));
+                    ], imagecolorat($img_png, 16 * $hd_ratio + $i, 2 * $hd_ratio + $k));
                 }
             }
             if ($this->display_hair) {
                 // HELMET/HAIR
-                $volume_points = array();
+                $volume_points = [];
                 for ($i = 0; $i < 9 * $hd_ratio; $i++) {
                     for ($j = 0; $j < 9 * $hd_ratio; $j++) {
                         if (!isset($volume_points[$i][$j][-2 * $hd_ratio])) {
-                            $volume_points[$i][$j][-2 * $hd_ratio] = new Point(array(
+                            $volume_points[$i][$j][-2 * $hd_ratio] = new Point([
                                 'x' => $i * 9 / 8 - 0.5 * $hd_ratio,
                                 'y' => $j * 9 / 8 - 0.5 * $hd_ratio,
                                 'z' => -2.5 * $hd_ratio
-                            ));
+                            ]);
                         }
                         if (!isset($volume_points[$i][$j][6 * $hd_ratio])) {
-                            $volume_points[$i][$j][6 * $hd_ratio] = new Point(array(
+                            $volume_points[$i][$j][6 * $hd_ratio] = new Point([
                                 'x' => $i * 9 / 8 - 0.5 * $hd_ratio,
                                 'y' => $j * 9 / 8 - 0.5 * $hd_ratio,
                                 'z' => 6.5 * $hd_ratio
-                            ));
+                            ]);
                         }
                     }
                 }
                 for ($j = 0; $j < 9 * $hd_ratio; $j++) {
                     for ($k = -2 * $hd_ratio; $k < 7 * $hd_ratio; $k++) {
                         if (!isset($volume_points[0][$j][$k])) {
-                            $volume_points[0][$j][$k] = new Point(array(
+                            $volume_points[0][$j][$k] = new Point([
                                 'x' => -0.5 * $hd_ratio,
                                 'y' => $j * 9 / 8 - 0.5 * $hd_ratio,
                                 'z' => $k * 9 / 8 - 0.5 * $hd_ratio
-                            ));
+                            ]);
                         }
                         if (!isset($volume_points[8 * $hd_ratio][$j][$k])) {
-                            $volume_points[8 * $hd_ratio][$j][$k] = new Point(array(
+                            $volume_points[8 * $hd_ratio][$j][$k] = new Point([
                                 'x' => 8.5 * $hd_ratio,
                                 'y' => $j * 9 / 8 - 0.5 * $hd_ratio,
                                 'z' => $k * 9 / 8 - 0.5 * $hd_ratio
-                            ));
+                            ]);
                         }
                     }
                 }
                 for ($i = 0; $i < 9 * $hd_ratio; $i++) {
                     for ($k = -2 * $hd_ratio; $k < 7 * $hd_ratio; $k++) {
                         if (!isset($volume_points[$i][0][$k])) {
-                            $volume_points[$i][0][$k] = new Point(array(
+                            $volume_points[$i][0][$k] = new Point([
                                 'x' => $i * 9 / 8 - 0.5 * $hd_ratio,
                                 'y' => -0.5 * $hd_ratio,
                                 'z' => $k * 9 / 8 - 0.5 * $hd_ratio
-                            ));
+                            ]);
                         }
                         if (!isset($volume_points[$i][8 * $hd_ratio][$k])) {
-                            $volume_points[$i][8 * $hd_ratio][$k] = new Point(array(
+                            $volume_points[$i][8 * $hd_ratio][$k] = new Point([
                                 'x' => $i * 9 / 8 - 0.5 * $hd_ratio,
                                 'y' => 8.5 * $hd_ratio,
                                 'z' => $k * 9 / 8 - 0.5 * $hd_ratio
-                            ));
+                            ]);
                         }
                     }
                 }
                 for ($i = 0; $i < 8 * $hd_ratio; $i++) {
                     for ($j = 0; $j < 8 * $hd_ratio; $j++) {
-                        $this->polygons['helmet']['back'][]  = new Polygon(array(
+                        $this->polygons['helmet']['back'][]  = new Polygon([
                             $volume_points[$i][$j][-2 * $hd_ratio],
                             $volume_points[$i + 1][$j][-2 * $hd_ratio],
                             $volume_points[$i + 1][$j + 1][-2 * $hd_ratio],
                             $volume_points[$i][$j + 1][-2 * $hd_ratio]
-                        ), imagecolorat($img_png, 32 * $hd_ratio + (32 * $hd_ratio - 1) - $i, 8 * $hd_ratio + $j));
-                        $this->polygons['helmet']['front'][] = new Polygon(array(
+                        ], imagecolorat($img_png, 32 * $hd_ratio + (32 * $hd_ratio - 1) - $i, 8 * $hd_ratio + $j));
+                        $this->polygons['helmet']['front'][] = new Polygon([
                             $volume_points[$i][$j][6 * $hd_ratio],
                             $volume_points[$i + 1][$j][6 * $hd_ratio],
                             $volume_points[$i + 1][$j + 1][6 * $hd_ratio],
                             $volume_points[$i][$j + 1][6 * $hd_ratio]
-                        ), imagecolorat($img_png, 32 * $hd_ratio + 8 * $hd_ratio + $i, 8 * $hd_ratio + $j));
+                        ], imagecolorat($img_png, 32 * $hd_ratio + 8 * $hd_ratio + $i, 8 * $hd_ratio + $j));
                     }
                 }
                 for ($j = 0; $j < 8 * $hd_ratio; $j++) {
                     for ($k = -2 * $hd_ratio; $k < 6 * $hd_ratio; $k++) {
-                        $this->polygons['helmet']['right'][] = new Polygon(array(
+                        $this->polygons['helmet']['right'][] = new Polygon([
                             $volume_points[0][$j][$k],
                             $volume_points[0][$j][$k + 1],
                             $volume_points[0][$j + 1][$k + 1],
                             $volume_points[0][$j + 1][$k]
-                        ), imagecolorat($img_png, 32 * $hd_ratio + $k + 2 * $hd_ratio, 8 * $hd_ratio + $j));
-                        $this->polygons['helmet']['left'][]  = new Polygon(array(
+                        ], imagecolorat($img_png, 32 * $hd_ratio + $k + 2 * $hd_ratio, 8 * $hd_ratio + $j));
+                        $this->polygons['helmet']['left'][]  = new Polygon([
                             $volume_points[8 * $hd_ratio][$j][$k],
                             $volume_points[8 * $hd_ratio][$j][$k + 1],
                             $volume_points[8 * $hd_ratio][$j + 1][$k + 1],
                             $volume_points[8 * $hd_ratio][$j + 1][$k]
-                        ), imagecolorat($img_png, 32 * $hd_ratio + (24 * $hd_ratio - 1) - $k - 2 * $hd_ratio, 8 * $hd_ratio + $j));
+                        ], imagecolorat($img_png, 32 * $hd_ratio + (24 * $hd_ratio - 1) - $k - 2 * $hd_ratio, 8 * $hd_ratio + $j));
                     }
                 }
                 for ($i = 0; $i < 8 * $hd_ratio; $i++) {
                     for ($k = -2 * $hd_ratio; $k < 6 * $hd_ratio; $k++) {
-                        $this->polygons['helmet']['top'][]    = new Polygon(array(
+                        $this->polygons['helmet']['top'][]    = new Polygon([
                             $volume_points[$i][0][$k],
                             $volume_points[$i + 1][0][$k],
                             $volume_points[$i + 1][0][$k + 1],
                             $volume_points[$i][0][$k + 1]
-                        ), imagecolorat($img_png, 32 * $hd_ratio + 8 * $hd_ratio + $i, $k + 2 * $hd_ratio));
-                        $this->polygons['helmet']['bottom'][] = new Polygon(array(
+                        ], imagecolorat($img_png, 32 * $hd_ratio + 8 * $hd_ratio + $i, $k + 2 * $hd_ratio));
+                        $this->polygons['helmet']['bottom'][] = new Polygon([
                             $volume_points[$i][8 * $hd_ratio][$k],
                             $volume_points[$i + 1][8 * $hd_ratio][$k],
                             $volume_points[$i + 1][8 * $hd_ratio][$k + 1],
                             $volume_points[$i][8 * $hd_ratio][$k + 1]
-                        ), imagecolorat($img_png, 32 * $hd_ratio + 16 * $hd_ratio + $i, 2 * $hd_ratio + $k));
+                        ], imagecolorat($img_png, 32 * $hd_ratio + 16 * $hd_ratio + $i, 2 * $hd_ratio + $k));
                     }
                 }
             }
             if (!$this->head_only) {
                 // TORSO
-                $volume_points = array();
+                $volume_points = [];
                 for ($i = 0; $i < 9 * $hd_ratio; $i++) {
                     for ($j = 0; $j < 13 * $hd_ratio; $j++) {
                         if (!isset($volume_points[$i][$j][0])) {
-                            $volume_points[$i][$j][0] = new Point(array(
+                            $volume_points[$i][$j][0] = new Point([
                                 'x' => $i,
                                 'y' => $j + 8 * $hd_ratio,
                                 'z' => 0
-                            ));
+                            ]);
                         }
                         if (!isset($volume_points[$i][$j][4 * $hd_ratio])) {
-                            $volume_points[$i][$j][4 * $hd_ratio] = new Point(array(
+                            $volume_points[$i][$j][4 * $hd_ratio] = new Point([
                                 'x' => $i,
                                 'y' => $j + 8 * $hd_ratio,
                                 'z' => 4 * $hd_ratio
-                            ));
+                            ]);
                         }
                     }
                 }
                 for ($j = 0; $j < 13 * $hd_ratio; $j++) {
                     for ($k = 0; $k < 5 * $hd_ratio; $k++) {
                         if (!isset($volume_points[0][$j][$k])) {
-                            $volume_points[0][$j][$k] = new Point(array(
+                            $volume_points[0][$j][$k] = new Point([
                                 'x' => 0,
                                 'y' => $j + 8 * $hd_ratio,
                                 'z' => $k
-                            ));
+                            ]);
                         }
                         if (!isset($volume_points[8 * $hd_ratio][$j][$k])) {
-                            $volume_points[8 * $hd_ratio][$j][$k] = new Point(array(
+                            $volume_points[8 * $hd_ratio][$j][$k] = new Point([
                                 'x' => 8 * $hd_ratio,
                                 'y' => $j + 8 * $hd_ratio,
                                 'z' => $k
-                            ));
+                            ]);
                         }
                     }
                 }
                 for ($i = 0; $i < 9 * $hd_ratio; $i++) {
                     for ($k = 0; $k < 5 * $hd_ratio; $k++) {
                         if (!isset($volume_points[$i][0][$k])) {
-                            $volume_points[$i][0][$k] = new Point(array(
+                            $volume_points[$i][0][$k] = new Point([
                                 'x' => $i,
                                 'y' => 0 + 8 * $hd_ratio,
                                 'z' => $k
-                            ));
+                            ]);
                         }
                         if (!isset($volume_points[$i][12 * $hd_ratio][$k])) {
-                            $volume_points[$i][12 * $hd_ratio][$k] = new Point(array(
+                            $volume_points[$i][12 * $hd_ratio][$k] = new Point([
                                 'x' => $i,
                                 'y' => 12 * $hd_ratio + 8 * $hd_ratio,
                                 'z' => $k
-                            ));
+                            ]);
                         }
                     }
                 }
                 for ($i = 0; $i < 8 * $hd_ratio; $i++) {
                     for ($j = 0; $j < 12 * $hd_ratio; $j++) {
-                        $this->polygons['torso']['back'][]  = new Polygon(array(
+                        $this->polygons['torso']['back'][]  = new Polygon([
                             $volume_points[$i][$j][0],
                             $volume_points[$i + 1][$j][0],
                             $volume_points[$i + 1][$j + 1][0],
                             $volume_points[$i][$j + 1][0]
-                        ), imagecolorat($img_png, (40 * $hd_ratio - 1) - $i, 20 * $hd_ratio + $j));
-                        $this->polygons['torso']['front'][] = new Polygon(array(
+                        ], imagecolorat($img_png, (40 * $hd_ratio - 1) - $i, 20 * $hd_ratio + $j));
+                        $this->polygons['torso']['front'][] = new Polygon([
                             $volume_points[$i][$j][4 * $hd_ratio],
                             $volume_points[$i + 1][$j][4 * $hd_ratio],
                             $volume_points[$i + 1][$j + 1][4 * $hd_ratio],
                             $volume_points[$i][$j + 1][4 * $hd_ratio]
-                        ), imagecolorat($img_png, 20 * $hd_ratio + $i, 20 * $hd_ratio + $j));
+                        ], imagecolorat($img_png, 20 * $hd_ratio + $i, 20 * $hd_ratio + $j));
                     }
                 }
                 for ($j = 0; $j < 12 * $hd_ratio; $j++) {
                     for ($k = 0; $k < 4 * $hd_ratio; $k++) {
-                        $this->polygons['torso']['right'][] = new Polygon(array(
+                        $this->polygons['torso']['right'][] = new Polygon([
                             $volume_points[0][$j][$k],
                             $volume_points[0][$j][$k + 1],
                             $volume_points[0][$j + 1][$k + 1],
                             $volume_points[0][$j + 1][$k]
-                        ), imagecolorat($img_png, 16 * $hd_ratio + $k, 20 * $hd_ratio + $j));
-                        $this->polygons['torso']['left'][]  = new Polygon(array(
+                        ], imagecolorat($img_png, 16 * $hd_ratio + $k, 20 * $hd_ratio + $j));
+                        $this->polygons['torso']['left'][]  = new Polygon([
                             $volume_points[8 * $hd_ratio][$j][$k],
                             $volume_points[8 * $hd_ratio][$j][$k + 1],
                             $volume_points[8 * $hd_ratio][$j + 1][$k + 1],
                             $volume_points[8 * $hd_ratio][$j + 1][$k]
-                        ), imagecolorat($img_png, (32 * $hd_ratio - 1) - $k, 20 * $hd_ratio + $j));
+                        ], imagecolorat($img_png, (32 * $hd_ratio - 1) - $k, 20 * $hd_ratio + $j));
                     }
                 }
                 for ($i = 0; $i < 8 * $hd_ratio; $i++) {
                     for ($k = 0; $k < 4 * $hd_ratio; $k++) {
-                        $this->polygons['torso']['top'][]    = new Polygon(array(
+                        $this->polygons['torso']['top'][]    = new Polygon([
                             $volume_points[$i][0][$k],
                             $volume_points[$i + 1][0][$k],
                             $volume_points[$i + 1][0][$k + 1],
                             $volume_points[$i][0][$k + 1]
-                        ), imagecolorat($img_png, 20 * $hd_ratio + $i, 16 * $hd_ratio + $k));
-                        $this->polygons['torso']['bottom'][] = new Polygon(array(
+                        ], imagecolorat($img_png, 20 * $hd_ratio + $i, 16 * $hd_ratio + $k));
+                        $this->polygons['torso']['bottom'][] = new Polygon([
                             $volume_points[$i][12 * $hd_ratio][$k],
                             $volume_points[$i + 1][12 * $hd_ratio][$k],
                             $volume_points[$i + 1][12 * $hd_ratio][$k + 1],
                             $volume_points[$i][12 * $hd_ratio][$k + 1]
-                        ), imagecolorat($img_png, 28 * $hd_ratio + $i, (20 * $hd_ratio - 1) - $k));
+                        ], imagecolorat($img_png, 28 * $hd_ratio + $i, (20 * $hd_ratio - 1) - $k));
                     }
                 }
                 // RIGHT ARM
-                $volume_points = array();
+                $volume_points = [];
                 for ($i = 0; $i < 9 * $hd_ratio; $i++) {
                     for ($j = 0; $j < 13 * $hd_ratio; $j++) {
                         if (!isset($volume_points[$i][$j][0])) {
-                            $volume_points[$i][$j][0] = new Point(array(
+                            $volume_points[$i][$j][0] = new Point([
                                 'x' => $i - 4 * $hd_ratio,
                                 'y' => $j + 8 * $hd_ratio,
                                 'z' => 0
-                            ));
+                            ]);
                         }
                         if (!isset($volume_points[$i][$j][4 * $hd_ratio])) {
-                            $volume_points[$i][$j][4 * $hd_ratio] = new Point(array(
+                            $volume_points[$i][$j][4 * $hd_ratio] = new Point([
                                 'x' => $i - 4 * $hd_ratio,
                                 'y' => $j + 8 * $hd_ratio,
                                 'z' => 4 * $hd_ratio
-                            ));
+                            ]);
                         }
                     }
                 }
                 for ($j = 0; $j < 13 * $hd_ratio; $j++) {
                     for ($k = 0; $k < 5 * $hd_ratio; $k++) {
                         if (!isset($volume_points[0][$j][$k])) {
-                            $volume_points[0][$j][$k] = new Point(array(
+                            $volume_points[0][$j][$k] = new Point([
                                 'x' => 0 - 4 * $hd_ratio,
                                 'y' => $j + 8 * $hd_ratio,
                                 'z' => $k
-                            ));
+                            ]);
                         }
                         if (!isset($volume_points[8 * $hd_ratio][$j][$k])) {
-                            $volume_points[4 * $hd_ratio][$j][$k] = new Point(array(
+                            $volume_points[4 * $hd_ratio][$j][$k] = new Point([
                                 'x' => 4 * $hd_ratio - 4 * $hd_ratio,
                                 'y' => $j + 8 * $hd_ratio,
                                 'z' => $k
-                            ));
+                            ]);
                         }
                     }
                 }
                 for ($i = 0; $i < 9 * $hd_ratio; $i++) {
                     for ($k = 0; $k < 5 * $hd_ratio; $k++) {
                         if (!isset($volume_points[$i][0][$k])) {
-                            $volume_points[$i][0][$k] = new Point(array(
+                            $volume_points[$i][0][$k] = new Point([
                                 'x' => $i - 4 * $hd_ratio,
                                 'y' => 0 + 8 * $hd_ratio,
                                 'z' => $k
-                            ));
+                            ]);
                         }
                         if (!isset($volume_points[$i][12 * $hd_ratio][$k])) {
-                            $volume_points[$i][12 * $hd_ratio][$k] = new Point(array(
+                            $volume_points[$i][12 * $hd_ratio][$k] = new Point([
                                 'x' => $i - 4 * $hd_ratio,
                                 'y' => 12 * $hd_ratio + 8 * $hd_ratio,
                                 'z' => $k
-                            ));
+                            ]);
                         }
                     }
                 }
                 for ($i = 0; $i < 4 * $hd_ratio; $i++) {
                     for ($j = 0; $j < 12 * $hd_ratio; $j++) {
-                        $this->polygons['rightArm']['back'][]  = new Polygon(array(
+                        $this->polygons['rightArm']['back'][]  = new Polygon([
                             $volume_points[$i][$j][0],
                             $volume_points[$i + 1][$j][0],
                             $volume_points[$i + 1][$j + 1][0],
                             $volume_points[$i][$j + 1][0]
-                        ), imagecolorat($img_png, (56 * $hd_ratio - 1) - $i, 20 * $hd_ratio + $j));
-                        $this->polygons['rightArm']['front'][] = new Polygon(array(
+                        ], imagecolorat($img_png, (56 * $hd_ratio - 1) - $i, 20 * $hd_ratio + $j));
+                        $this->polygons['rightArm']['front'][] = new Polygon([
                             $volume_points[$i][$j][4 * $hd_ratio],
                             $volume_points[$i + 1][$j][4 * $hd_ratio],
                             $volume_points[$i + 1][$j + 1][4 * $hd_ratio],
                             $volume_points[$i][$j + 1][4 * $hd_ratio]
-                        ), imagecolorat($img_png, 44 * $hd_ratio + $i, 20 * $hd_ratio + $j));
+                        ], imagecolorat($img_png, 44 * $hd_ratio + $i, 20 * $hd_ratio + $j));
                     }
                 }
                 for ($j = 0; $j < 12 * $hd_ratio; $j++) {
                     for ($k = 0; $k < 4 * $hd_ratio; $k++) {
-                        $this->polygons['rightArm']['right'][] = new Polygon(array(
+                        $this->polygons['rightArm']['right'][] = new Polygon([
                             $volume_points[0][$j][$k],
                             $volume_points[0][$j][$k + 1],
                             $volume_points[0][$j + 1][$k + 1],
                             $volume_points[0][$j + 1][$k]
-                        ), imagecolorat($img_png, 40 * $hd_ratio + $k, 20 * $hd_ratio + $j));
-                        $this->polygons['rightArm']['left'][]  = new Polygon(array(
+                        ], imagecolorat($img_png, 40 * $hd_ratio + $k, 20 * $hd_ratio + $j));
+                        $this->polygons['rightArm']['left'][]  = new Polygon([
                             $volume_points[4 * $hd_ratio][$j][$k],
                             $volume_points[4 * $hd_ratio][$j][$k + 1],
                             $volume_points[4 * $hd_ratio][$j + 1][$k + 1],
                             $volume_points[4 * $hd_ratio][$j + 1][$k]
-                        ), imagecolorat($img_png, (52 * $hd_ratio - 1) - $k, 20 * $hd_ratio + $j));
+                        ], imagecolorat($img_png, (52 * $hd_ratio - 1) - $k, 20 * $hd_ratio + $j));
                     }
                 }
                 for ($i = 0; $i < 4 * $hd_ratio; $i++) {
                     for ($k = 0; $k < 4 * $hd_ratio; $k++) {
-                        $this->polygons['rightArm']['top'][]    = new Polygon(array(
+                        $this->polygons['rightArm']['top'][]    = new Polygon([
                             $volume_points[$i][0][$k],
                             $volume_points[$i + 1][0][$k],
                             $volume_points[$i + 1][0][$k + 1],
                             $volume_points[$i][0][$k + 1]
-                        ), imagecolorat($img_png, 44 * $hd_ratio + $i, 16 * $hd_ratio + $k));
-                        $this->polygons['rightArm']['bottom'][] = new Polygon(array(
+                        ], imagecolorat($img_png, 44 * $hd_ratio + $i, 16 * $hd_ratio + $k));
+                        $this->polygons['rightArm']['bottom'][] = new Polygon([
                             $volume_points[$i][12 * $hd_ratio][$k],
                             $volume_points[$i + 1][12 * $hd_ratio][$k],
                             $volume_points[$i + 1][12 * $hd_ratio][$k + 1],
                             $volume_points[$i][12 * $hd_ratio][$k + 1]
-                        ), imagecolorat($img_png, 48 * $hd_ratio + $i, 16 * $hd_ratio + $k));
+                        ], imagecolorat($img_png, 48 * $hd_ratio + $i, 16 * $hd_ratio + $k));
                     }
                 }
                 // LEFT ARM
-                $volume_points = array();
+                $volume_points = [];
                 for ($i = 0; $i < 9 * $hd_ratio; $i++) {
                     for ($j = 0; $j < 13 * $hd_ratio; $j++) {
                         if (!isset($volume_points[$i][$j][0])) {
-                            $volume_points[$i][$j][0] = new Point(array(
+                            $volume_points[$i][$j][0] = new Point([
                                 'x' => $i + 8 * $hd_ratio,
                                 'y' => $j + 8 * $hd_ratio,
                                 'z' => 0
-                            ));
+                            ]);
                         }
                         if (!isset($volume_points[$i][$j][4 * $hd_ratio])) {
-                            $volume_points[$i][$j][4 * $hd_ratio] = new Point(array(
+                            $volume_points[$i][$j][4 * $hd_ratio] = new Point([
                                 'x' => $i + 8 * $hd_ratio,
                                 'y' => $j + 8 * $hd_ratio,
                                 'z' => 4 * $hd_ratio
-                            ));
+                            ]);
                         }
                     }
                 }
                 for ($j = 0; $j < 13 * $hd_ratio; $j++) {
                     for ($k = 0; $k < 5 * $hd_ratio; $k++) {
                         if (!isset($volume_points[0][$j][$k])) {
-                            $volume_points[0][$j][$k] = new Point(array(
+                            $volume_points[0][$j][$k] = new Point([
                                 'x' => 0 + 8 * $hd_ratio,
                                 'y' => $j + 8 * $hd_ratio,
                                 'z' => $k
-                            ));
+                            ]);
                         }
                         if (!isset($volume_points[8 * $hd_ratio][$j][$k])) {
-                            $volume_points[4 * $hd_ratio][$j][$k] = new Point(array(
+                            $volume_points[4 * $hd_ratio][$j][$k] = new Point([
                                 'x' => 4 * $hd_ratio + 8 * $hd_ratio,
                                 'y' => $j + 8 * $hd_ratio,
                                 'z' => $k
-                            ));
+                            ]);
                         }
                     }
                 }
                 for ($i = 0; $i < 9 * $hd_ratio; $i++) {
                     for ($k = 0; $k < 5 * $hd_ratio; $k++) {
                         if (!isset($volume_points[$i][0][$k])) {
-                            $volume_points[$i][0][$k] = new Point(array(
+                            $volume_points[$i][0][$k] = new Point([
                                 'x' => $i + 8 * $hd_ratio,
                                 'y' => 0 + 8 * $hd_ratio,
                                 'z' => $k
-                            ));
+                            ]);
                         }
                         if (!isset($volume_points[$i][12 * $hd_ratio][$k])) {
-                            $volume_points[$i][12 * $hd_ratio][$k] = new Point(array(
+                            $volume_points[$i][12 * $hd_ratio][$k] = new Point([
                                 'x' => $i + 8 * $hd_ratio,
                                 'y' => 12 * $hd_ratio + 8 * $hd_ratio,
                                 'z' => $k
-                            ));
+                            ]);
                         }
                     }
                 }
@@ -1080,18 +1121,18 @@
                             $color2 = imagecolorat($img_png, 44 * $hd_ratio + ((4 * $hd_ratio - 1) - $i), 20 * $hd_ratio + $j);
                         }
 
-                        $this->polygons['leftArm']['back'][]  = new Polygon(array(
+                        $this->polygons['leftArm']['back'][]  = new Polygon([
                             $volume_points[$i][$j][0],
                             $volume_points[$i + 1][$j][0],
                             $volume_points[$i + 1][$j + 1][0],
                             $volume_points[$i][$j + 1][0]
-                        ), $color1);
-                        $this->polygons['leftArm']['front'][] = new Polygon(array(
+                        ], $color1);
+                        $this->polygons['leftArm']['front'][] = new Polygon([
                             $volume_points[$i][$j][4 * $hd_ratio],
                             $volume_points[$i + 1][$j][4 * $hd_ratio],
                             $volume_points[$i + 1][$j + 1][4 * $hd_ratio],
                             $volume_points[$i][$j + 1][4 * $hd_ratio]
-                        ), $color2);
+                        ], $color2);
                     }
                 }
                 for ($j = 0; $j < 12 * $hd_ratio; $j++) {
@@ -1104,18 +1145,18 @@
                             $color2 = imagecolorat($img_png, (52 * $hd_ratio - 1) - ((4 * $hd_ratio - 1) - $k), 20 * $hd_ratio + $j);
                         }
 
-                        $this->polygons['leftArm']['right'][] = new Polygon(array(
+                        $this->polygons['leftArm']['right'][] = new Polygon([
                             $volume_points[0][$j][$k],
                             $volume_points[0][$j][$k + 1],
                             $volume_points[0][$j + 1][$k + 1],
                             $volume_points[0][$j + 1][$k]
-                        ), $color1);
-                        $this->polygons['leftArm']['left'][]  = new Polygon(array(
+                        ], $color1);
+                        $this->polygons['leftArm']['left'][]  = new Polygon([
                             $volume_points[4 * $hd_ratio][$j][$k],
                             $volume_points[4 * $hd_ratio][$j][$k + 1],
                             $volume_points[4 * $hd_ratio][$j + 1][$k + 1],
                             $volume_points[4 * $hd_ratio][$j + 1][$k]
-                        ), $color2);
+                        ], $color2);
                     }
                 }
                 for ($i = 0; $i < 4 * $hd_ratio; $i++) {
@@ -1128,177 +1169,177 @@
                             $color2 = imagecolorat($img_png, 48 * $hd_ratio + ((4 * $hd_ratio - 1) - $i), (20 * $hd_ratio - 1) - $k);
                         }
 
-                        $this->polygons['leftArm']['top'][]    = new Polygon(array(
+                        $this->polygons['leftArm']['top'][]    = new Polygon([
                             $volume_points[$i][0][$k],
                             $volume_points[$i + 1][0][$k],
                             $volume_points[$i + 1][0][$k + 1],
                             $volume_points[$i][0][$k + 1]
-                        ), $color1);
-                        $this->polygons['leftArm']['bottom'][] = new Polygon(array(
+                        ], $color1);
+                        $this->polygons['leftArm']['bottom'][] = new Polygon([
                             $volume_points[$i][12 * $hd_ratio][$k],
                             $volume_points[$i + 1][12 * $hd_ratio][$k],
                             $volume_points[$i + 1][12 * $hd_ratio][$k + 1],
                             $volume_points[$i][12 * $hd_ratio][$k + 1]
-                        ), $color2);
+                        ], $color2);
                     }
                 }
                 // RIGHT LEG
-                $volume_points = array();
+                $volume_points = [];
                 for ($i = 0; $i < 9 * $hd_ratio; $i++) {
                     for ($j = 0; $j < 13 * $hd_ratio; $j++) {
                         if (!isset($volume_points[$i][$j][0])) {
-                            $volume_points[$i][$j][0] = new Point(array(
+                            $volume_points[$i][$j][0] = new Point([
                                 'x' => $i,
                                 'y' => $j + 20 * $hd_ratio,
                                 'z' => 0
-                            ));
+                            ]);
                         }
                         if (!isset($volume_points[$i][$j][4 * $hd_ratio])) {
-                            $volume_points[$i][$j][4 * $hd_ratio] = new Point(array(
+                            $volume_points[$i][$j][4 * $hd_ratio] = new Point([
                                 'x' => $i,
                                 'y' => $j + 20 * $hd_ratio,
                                 'z' => 4 * $hd_ratio
-                            ));
+                            ]);
                         }
                     }
                 }
                 for ($j = 0; $j < 13 * $hd_ratio; $j++) {
                     for ($k = 0; $k < 5 * $hd_ratio; $k++) {
                         if (!isset($volume_points[0][$j][$k])) {
-                            $volume_points[0][$j][$k] = new Point(array(
+                            $volume_points[0][$j][$k] = new Point([
                                 'x' => 0,
                                 'y' => $j + 20 * $hd_ratio,
                                 'z' => $k
-                            ));
+                            ]);
                         }
                         if (!isset($volume_points[8 * $hd_ratio][$j][$k])) {
-                            $volume_points[4 * $hd_ratio][$j][$k] = new Point(array(
+                            $volume_points[4 * $hd_ratio][$j][$k] = new Point([
                                 'x' => 4 * $hd_ratio,
                                 'y' => $j + 20 * $hd_ratio,
                                 'z' => $k
-                            ));
+                            ]);
                         }
                     }
                 }
                 for ($i = 0; $i < 9 * $hd_ratio; $i++) {
                     for ($k = 0; $k < 5 * $hd_ratio; $k++) {
                         if (!isset($volume_points[$i][0][$k])) {
-                            $volume_points[$i][0][$k] = new Point(array(
+                            $volume_points[$i][0][$k] = new Point([
                                 'x' => $i,
                                 'y' => 0 + 20 * $hd_ratio,
                                 'z' => $k
-                            ));
+                            ]);
                         }
                         if (!isset($volume_points[$i][12 * $hd_ratio][$k])) {
-                            $volume_points[$i][12 * $hd_ratio][$k] = new Point(array(
+                            $volume_points[$i][12 * $hd_ratio][$k] = new Point([
                                 'x' => $i,
                                 'y' => 12 * $hd_ratio + 20 * $hd_ratio,
                                 'z' => $k
-                            ));
+                            ]);
                         }
                     }
                 }
                 for ($i = 0; $i < 4 * $hd_ratio; $i++) {
                     for ($j = 0; $j < 12 * $hd_ratio; $j++) {
-                        $this->polygons['rightLeg']['back'][]  = new Polygon(array(
+                        $this->polygons['rightLeg']['back'][]  = new Polygon([
                             $volume_points[$i][$j][0],
                             $volume_points[$i + 1][$j][0],
                             $volume_points[$i + 1][$j + 1][0],
                             $volume_points[$i][$j + 1][0]
-                        ), imagecolorat($img_png, (16 * $hd_ratio - 1) - $i, 20 * $hd_ratio + $j));
-                        $this->polygons['rightLeg']['front'][] = new Polygon(array(
+                        ], imagecolorat($img_png, (16 * $hd_ratio - 1) - $i, 20 * $hd_ratio + $j));
+                        $this->polygons['rightLeg']['front'][] = new Polygon([
                             $volume_points[$i][$j][4 * $hd_ratio],
                             $volume_points[$i + 1][$j][4 * $hd_ratio],
                             $volume_points[$i + 1][$j + 1][4 * $hd_ratio],
                             $volume_points[$i][$j + 1][4 * $hd_ratio]
-                        ), imagecolorat($img_png, 4 * $hd_ratio + $i, 20 * $hd_ratio + $j));
+                        ], imagecolorat($img_png, 4 * $hd_ratio + $i, 20 * $hd_ratio + $j));
                     }
                 }
                 for ($j = 0; $j < 12 * $hd_ratio; $j++) {
                     for ($k = 0; $k < 4 * $hd_ratio; $k++) {
-                        $this->polygons['rightLeg']['right'][] = new Polygon(array(
+                        $this->polygons['rightLeg']['right'][] = new Polygon([
                             $volume_points[0][$j][$k],
                             $volume_points[0][$j][$k + 1],
                             $volume_points[0][$j + 1][$k + 1],
                             $volume_points[0][$j + 1][$k]
-                        ), imagecolorat($img_png, 0 + $k, 20 * $hd_ratio + $j));
-                        $this->polygons['rightLeg']['left'][]  = new Polygon(array(
+                        ], imagecolorat($img_png, 0 + $k, 20 * $hd_ratio + $j));
+                        $this->polygons['rightLeg']['left'][]  = new Polygon([
                             $volume_points[4 * $hd_ratio][$j][$k],
                             $volume_points[4 * $hd_ratio][$j][$k + 1],
                             $volume_points[4 * $hd_ratio][$j + 1][$k + 1],
                             $volume_points[4 * $hd_ratio][$j + 1][$k]
-                        ), imagecolorat($img_png, (12 * $hd_ratio - 1) - $k, 20 * $hd_ratio + $j));
+                        ], imagecolorat($img_png, (12 * $hd_ratio - 1) - $k, 20 * $hd_ratio + $j));
                     }
                 }
                 for ($i = 0; $i < 4 * $hd_ratio; $i++) {
                     for ($k = 0; $k < 4 * $hd_ratio; $k++) {
-                        $this->polygons['rightLeg']['top'][]    = new Polygon(array(
+                        $this->polygons['rightLeg']['top'][]    = new Polygon([
                             $volume_points[$i][0][$k],
                             $volume_points[$i + 1][0][$k],
                             $volume_points[$i + 1][0][$k + 1],
                             $volume_points[$i][0][$k + 1]
-                        ), imagecolorat($img_png, 4 * $hd_ratio + $i, 16 * $hd_ratio + $k));
-                        $this->polygons['rightLeg']['bottom'][] = new Polygon(array(
+                        ], imagecolorat($img_png, 4 * $hd_ratio + $i, 16 * $hd_ratio + $k));
+                        $this->polygons['rightLeg']['bottom'][] = new Polygon([
                             $volume_points[$i][12 * $hd_ratio][$k],
                             $volume_points[$i + 1][12 * $hd_ratio][$k],
                             $volume_points[$i + 1][12 * $hd_ratio][$k + 1],
                             $volume_points[$i][12 * $hd_ratio][$k + 1]
-                        ), imagecolorat($img_png, 8 * $hd_ratio + $i, 16 * $hd_ratio + $k));
+                        ], imagecolorat($img_png, 8 * $hd_ratio + $i, 16 * $hd_ratio + $k));
                     }
                 }
                 // LEFT LEG
-                $volume_points = array();
+                $volume_points = [];
                 for ($i = 0; $i < 9 * $hd_ratio; $i++) {
                     for ($j = 0; $j < 13 * $hd_ratio; $j++) {
                         if (!isset($volume_points[$i][$j][0])) {
-                            $volume_points[$i][$j][0] = new Point(array(
+                            $volume_points[$i][$j][0] = new Point([
                                 'x' => $i + 4 * $hd_ratio,
                                 'y' => $j + 20 * $hd_ratio,
                                 'z' => 0
-                            ));
+                            ]);
                         }
                         if (!isset($volume_points[$i][$j][4 * $hd_ratio])) {
-                            $volume_points[$i][$j][4 * $hd_ratio] = new Point(array(
+                            $volume_points[$i][$j][4 * $hd_ratio] = new Point([
                                 'x' => $i + 4 * $hd_ratio,
                                 'y' => $j + 20 * $hd_ratio,
                                 'z' => 4 * $hd_ratio
-                            ));
+                            ]);
                         }
                     }
                 }
                 for ($j = 0; $j < 13 * $hd_ratio; $j++) {
                     for ($k = 0; $k < 5 * $hd_ratio; $k++) {
                         if (!isset($volume_points[0][$j][$k])) {
-                            $volume_points[0][$j][$k] = new Point(array(
+                            $volume_points[0][$j][$k] = new Point([
                                 'x' => 0 + 4 * $hd_ratio,
                                 'y' => $j + 20 * $hd_ratio,
                                 'z' => $k
-                            ));
+                            ]);
                         }
                         if (!isset($volume_points[8 * $hd_ratio][$j][$k])) {
-                            $volume_points[4 * $hd_ratio][$j][$k] = new Point(array(
+                            $volume_points[4 * $hd_ratio][$j][$k] = new Point([
                                 'x' => 4 * $hd_ratio + 4 * $hd_ratio,
                                 'y' => $j + 20 * $hd_ratio,
                                 'z' => $k
-                            ));
+                            ]);
                         }
                     }
                 }
                 for ($i = 0; $i < 9 * $hd_ratio; $i++) {
                     for ($k = 0; $k < 5 * $hd_ratio; $k++) {
                         if (!isset($volume_points[$i][0][$k])) {
-                            $volume_points[$i][0][$k] = new Point(array(
+                            $volume_points[$i][0][$k] = new Point([
                                 'x' => $i + 4 * $hd_ratio,
                                 'y' => 0 + 20 * $hd_ratio,
                                 'z' => $k
-                            ));
+                            ]);
                         }
                         if (!isset($volume_points[$i][12 * $hd_ratio][$k])) {
-                            $volume_points[$i][12 * $hd_ratio][$k] = new Point(array(
+                            $volume_points[$i][12 * $hd_ratio][$k] = new Point([
                                 'x' => $i + 4 * $hd_ratio,
                                 'y' => 12 * $hd_ratio + 20 * $hd_ratio,
                                 'z' => $k
-                            ));
+                            ]);
                         }
                     }
                 }
@@ -1312,18 +1353,18 @@
                             $color2 = imagecolorat($img_png, 4 * $hd_ratio + ((4 * $hd_ratio - 1) - $i), 20 * $hd_ratio + $j);
                         }
 
-                        $this->polygons['leftLeg']['back'][]  = new Polygon(array(
+                        $this->polygons['leftLeg']['back'][]  = new Polygon([
                             $volume_points[$i][$j][0],
                             $volume_points[$i + 1][$j][0],
                             $volume_points[$i + 1][$j + 1][0],
                             $volume_points[$i][$j + 1][0]
-                        ), $color1);
-                        $this->polygons['leftLeg']['front'][] = new Polygon(array(
+                        ], $color1);
+                        $this->polygons['leftLeg']['front'][] = new Polygon([
                             $volume_points[$i][$j][4 * $hd_ratio],
                             $volume_points[$i + 1][$j][4 * $hd_ratio],
                             $volume_points[$i + 1][$j + 1][4 * $hd_ratio],
                             $volume_points[$i][$j + 1][4 * $hd_ratio]
-                        ), $color2);
+                        ], $color2);
                     }
                 }
                 for ($j = 0; $j < 12 * $hd_ratio; $j++) {
@@ -1336,18 +1377,18 @@
                             $color2 = imagecolorat($img_png, (12 * $hd_ratio - 1) - ((4 * $hd_ratio - 1) - $k), 20 * $hd_ratio + $j);
                         }
 
-                        $this->polygons['leftLeg']['right'][] = new Polygon(array(
+                        $this->polygons['leftLeg']['right'][] = new Polygon([
                             $volume_points[0][$j][$k],
                             $volume_points[0][$j][$k + 1],
                             $volume_points[0][$j + 1][$k + 1],
                             $volume_points[0][$j + 1][$k]
-                        ), $color1);
-                        $this->polygons['leftLeg']['left'][]  = new Polygon(array(
+                        ], $color1);
+                        $this->polygons['leftLeg']['left'][]  = new Polygon([
                             $volume_points[4 * $hd_ratio][$j][$k],
                             $volume_points[4 * $hd_ratio][$j][$k + 1],
                             $volume_points[4 * $hd_ratio][$j + 1][$k + 1],
                             $volume_points[4 * $hd_ratio][$j + 1][$k]
-                        ), $color2);
+                        ], $color2);
                     }
                 }
                 for ($i = 0; $i < 4 * $hd_ratio; $i++) {
@@ -1360,18 +1401,18 @@
                             $color2 = imagecolorat($img_png, 8 * $hd_ratio + ((4 * $hd_ratio - 1) - $i), (20 * $hd_ratio - 1) - $k);
                         }
 
-                        $this->polygons['leftLeg']['top'][]    = new Polygon(array(
+                        $this->polygons['leftLeg']['top'][]    = new Polygon([
                             $volume_points[$i][0][$k],
                             $volume_points[$i + 1][0][$k],
                             $volume_points[$i + 1][0][$k + 1],
                             $volume_points[$i][0][$k + 1]
-                        ), $color1);
-                        $this->polygons['leftLeg']['bottom'][] = new Polygon(array(
+                        ], $color1);
+                        $this->polygons['leftLeg']['bottom'][] = new Polygon([
                             $volume_points[$i][12 * $hd_ratio][$k],
                             $volume_points[$i + 1][12 * $hd_ratio][$k],
                             $volume_points[$i + 1][12 * $hd_ratio][$k + 1],
                             $volume_points[$i][12 * $hd_ratio][$k + 1]
-                        ), $color2);
+                        ], $color2);
                     }
                 }
             }
@@ -1436,6 +1477,11 @@
 
         /* Function displays the image
          *
+         */
+        /**
+         * @param $output
+         *
+         * @return resource|string
          */
         private function displayImage($output) {
             global $minX, $maxX, $minY, $maxY;
@@ -1529,65 +1575,68 @@
         /* Function retuns display order
          *
          */
+        /**
+         * @return array
+         */
         private function getDisplayOrder() {
-            $display_order = array();
+            $display_order = [];
             if (in_array('top', $this->front_faces)) {
                 if (in_array('right', $this->front_faces)) {
-                    $display_order[] = array('leftLeg' => $this->back_faces);
-                    $display_order[] = array('leftLeg' => $this->visible_faces['leftLeg']['front']);
-                    $display_order[] = array('rightLeg' => $this->back_faces);
-                    $display_order[] = array('rightLeg' => $this->visible_faces['rightLeg']['front']);
-                    $display_order[] = array('leftArm' => $this->back_faces);
-                    $display_order[] = array('leftArm' => $this->visible_faces['leftArm']['front']);
-                    $display_order[] = array('torso' => $this->back_faces);
-                    $display_order[] = array('torso' => $this->visible_faces['torso']['front']);
-                    $display_order[] = array('rightArm' => $this->back_faces);
-                    $display_order[] = array('rightArm' => $this->visible_faces['rightArm']['front']);
+                    $display_order[] = ['leftLeg' => $this->back_faces];
+                    $display_order[] = ['leftLeg' => $this->visible_faces['leftLeg']['front']];
+                    $display_order[] = ['rightLeg' => $this->back_faces];
+                    $display_order[] = ['rightLeg' => $this->visible_faces['rightLeg']['front']];
+                    $display_order[] = ['leftArm' => $this->back_faces];
+                    $display_order[] = ['leftArm' => $this->visible_faces['leftArm']['front']];
+                    $display_order[] = ['torso' => $this->back_faces];
+                    $display_order[] = ['torso' => $this->visible_faces['torso']['front']];
+                    $display_order[] = ['rightArm' => $this->back_faces];
+                    $display_order[] = ['rightArm' => $this->visible_faces['rightArm']['front']];
                 } else {
-                    $display_order[] = array('rightLeg' => $this->back_faces);
-                    $display_order[] = array('rightLeg' => $this->visible_faces['rightLeg']['front']);
-                    $display_order[] = array('leftLeg' => $this->back_faces);
-                    $display_order[] = array('leftLeg' => $this->visible_faces['leftLeg']['front']);
-                    $display_order[] = array('rightArm' => $this->back_faces);
-                    $display_order[] = array('rightArm' => $this->visible_faces['rightArm']['front']);
-                    $display_order[] = array('torso' => $this->back_faces);
-                    $display_order[] = array('torso' => $this->visible_faces['torso']['front']);
-                    $display_order[] = array('leftArm' => $this->back_faces);
-                    $display_order[] = array('leftArm' => $this->visible_faces['leftArm']['front']);
+                    $display_order[] = ['rightLeg' => $this->back_faces];
+                    $display_order[] = ['rightLeg' => $this->visible_faces['rightLeg']['front']];
+                    $display_order[] = ['leftLeg' => $this->back_faces];
+                    $display_order[] = ['leftLeg' => $this->visible_faces['leftLeg']['front']];
+                    $display_order[] = ['rightArm' => $this->back_faces];
+                    $display_order[] = ['rightArm' => $this->visible_faces['rightArm']['front']];
+                    $display_order[] = ['torso' => $this->back_faces];
+                    $display_order[] = ['torso' => $this->visible_faces['torso']['front']];
+                    $display_order[] = ['leftArm' => $this->back_faces];
+                    $display_order[] = ['leftArm' => $this->visible_faces['leftArm']['front']];
                 }
 
-                $display_order[] = array('helmet' => $this->back_faces);
-                $display_order[] = array('head' => $this->back_faces);
-                $display_order[] = array('head' => $this->visible_faces['head']['front']);
-                $display_order[] = array('helmet' => $this->visible_faces['head']['front']);
+                $display_order[] = ['helmet' => $this->back_faces];
+                $display_order[] = ['head' => $this->back_faces];
+                $display_order[] = ['head' => $this->visible_faces['head']['front']];
+                $display_order[] = ['helmet' => $this->visible_faces['head']['front']];
             } else {
-                $display_order[] = array('helmet' => $this->back_faces);
-                $display_order[] = array('head' => $this->back_faces);
-                $display_order[] = array('head' => $this->visible_faces['head']['front']);
-                $display_order[] = array('helmet' => $this->visible_faces['head']['front']);
+                $display_order[] = ['helmet' => $this->back_faces];
+                $display_order[] = ['head' => $this->back_faces];
+                $display_order[] = ['head' => $this->visible_faces['head']['front']];
+                $display_order[] = ['helmet' => $this->visible_faces['head']['front']];
 
                 if (in_array('right', $this->front_faces)) {
-                    $display_order[] = array('leftArm' => $this->back_faces);
-                    $display_order[] = array('leftArm' => $this->visible_faces['leftArm']['front']);
-                    $display_order[] = array('torso' => $this->back_faces);
-                    $display_order[] = array('torso' => $this->visible_faces['torso']['front']);
-                    $display_order[] = array('rightArm' => $this->back_faces);
-                    $display_order[] = array('rightArm' => $this->visible_faces['rightArm']['front']);
-                    $display_order[] = array('leftLeg' => $this->back_faces);
-                    $display_order[] = array('leftLeg' => $this->visible_faces['leftLeg']['front']);
-                    $display_order[] = array('rightLeg' => $this->back_faces);
-                    $display_order[] = array('rightLeg' => $this->visible_faces['rightLeg']['front']);
+                    $display_order[] = ['leftArm' => $this->back_faces];
+                    $display_order[] = ['leftArm' => $this->visible_faces['leftArm']['front']];
+                    $display_order[] = ['torso' => $this->back_faces];
+                    $display_order[] = ['torso' => $this->visible_faces['torso']['front']];
+                    $display_order[] = ['rightArm' => $this->back_faces];
+                    $display_order[] = ['rightArm' => $this->visible_faces['rightArm']['front']];
+                    $display_order[] = ['leftLeg' => $this->back_faces];
+                    $display_order[] = ['leftLeg' => $this->visible_faces['leftLeg']['front']];
+                    $display_order[] = ['rightLeg' => $this->back_faces];
+                    $display_order[] = ['rightLeg' => $this->visible_faces['rightLeg']['front']];
                 } else {
-                    $display_order[] = array('rightArm' => $this->back_faces);
-                    $display_order[] = array('rightArm' => $this->visible_faces['rightArm']['front']);
-                    $display_order[] = array('torso' => $this->back_faces);
-                    $display_order[] = array('torso' => $this->visible_faces['torso']['front']);
-                    $display_order[] = array('leftArm' => $this->back_faces);
-                    $display_order[] = array('leftArm' => $this->visible_faces['leftArm']['front']);
-                    $display_order[] = array('rightLeg' => $this->back_faces);
-                    $display_order[] = array('rightLeg' => $this->visible_faces['rightLeg']['front']);
-                    $display_order[] = array('leftLeg' => $this->back_faces);
-                    $display_order[] = array('leftLeg' => $this->visible_faces['leftLeg']['front']);
+                    $display_order[] = ['rightArm' => $this->back_faces];
+                    $display_order[] = ['rightArm' => $this->visible_faces['rightArm']['front']];
+                    $display_order[] = ['torso' => $this->back_faces];
+                    $display_order[] = ['torso' => $this->visible_faces['torso']['front']];
+                    $display_order[] = ['leftArm' => $this->back_faces];
+                    $display_order[] = ['leftArm' => $this->visible_faces['leftArm']['front']];
+                    $display_order[] = ['rightLeg' => $this->back_faces];
+                    $display_order[] = ['rightLeg' => $this->visible_faces['rightLeg']['front']];
+                    $display_order[] = ['leftLeg' => $this->back_faces];
+                    $display_order[] = ['leftLeg' => $this->visible_faces['leftLeg']['front']];
                 }
             }
 
@@ -1600,7 +1649,13 @@
      * Handels image related things
      */
 
+    /**
+     * Class img
+     */
     class img {
+        /**
+         *
+         */
         private function __construct() {
         }
 
@@ -1610,6 +1665,12 @@
          *
          * Espects canvas with and canvast height.
          * Returns a empty canvas.
+         */
+        /**
+         * @param $w
+         * @param $h
+         *
+         * @return resource
          */
         public static function createEmptyCanvas($w, $h) {
             $dst = imagecreatetruecolor($w, $h);
@@ -1640,6 +1701,11 @@
          * Espects an image.
          * Returns a true color image.
          */
+        /**
+         * @param $img
+         *
+         * @return resource
+         */
         public static function convertToTrueColor($img) {
             if (imageistruecolor($img)) {
                 return $img;
@@ -1658,25 +1724,31 @@
      *
      */
 
+    /**
+     * Class Point
+     */
     class Point {
         private $_originCoord;
-        private $_destCoord = array();
+        private $_destCoord = [];
         private $_isProjected = false;
         private $_isPreProjected = false;
 
+        /**
+         * @param $originCoord
+         */
         public function __construct($originCoord) {
             if (is_array($originCoord) && count($originCoord) == 3) {
-                $this->_originCoord = array(
+                $this->_originCoord = [
                     'x' => (isset($originCoord['x']) ? $originCoord['x'] : 0),
                     'y' => (isset($originCoord['y']) ? $originCoord['y'] : 0),
                     'z' => (isset($originCoord['z']) ? $originCoord['z'] : 0)
-                );
+                ];
             } else {
-                $this->_originCoord = array(
+                $this->_originCoord = [
                     'x' => 0,
                     'y' => 0,
                     'z' => 0
-                );
+                ];
             }
         }
 
@@ -1698,6 +1770,15 @@
             $maxY                  = max($maxY, $this->_destCoord['y']);
         }
 
+        /**
+         * @param $dx
+         * @param $dy
+         * @param $dz
+         * @param $cos_alpha
+         * @param $sin_alpha
+         * @param $cos_omega
+         * @param $sin_omega
+         */
         public function preProject($dx, $dy, $dz, $cos_alpha, $sin_alpha, $cos_omega, $sin_omega) {
             if (!$this->_isPreProjected) {
                 $x                       = $this->_originCoord['x'] - $dx;
@@ -1710,10 +1791,16 @@
             }
         }
 
+        /**
+         * @return array
+         */
         public function getOriginCoord() {
             return $this->_originCoord;
         }
 
+        /**
+         * @return array
+         */
         public function getDestCoord() {
             return $this->_destCoord;
         }
@@ -1725,6 +1812,9 @@
             return $this->_destCoord['z'];
         }
 
+        /**
+         * @return bool
+         */
         public function isProjected() {
             return $this->_isProjected;
         }
@@ -1734,6 +1824,9 @@
      *
      */
 
+    /**
+     * Class Polygon
+     */
     class Polygon {
         private $_dots;
         private $_colour;
@@ -1741,6 +1834,10 @@
         private $_face = 'w';
         private $_faceDepth = 0;
 
+        /**
+         * @param $dots
+         * @param $colour
+         */
         public function __construct($dots, $colour) {
             $this->_dots   = $dots;
             $this->_colour = $colour;
@@ -1760,11 +1857,17 @@
         }
 
         // never used
+        /**
+         * @return string
+         */
         private function getFace() {
             return $this->_face;
         }
 
         // never used
+        /**
+         * @return int
+         */
         private function getFaceDepth() {
             if (!$this->_isProjected) {
                 $this->project();
@@ -1772,6 +1875,11 @@
             return $this->_faceDepth;
         }
 
+        /**
+         * @param $ratio
+         *
+         * @return string
+         */
         public function getSvgPolygon($ratio) {
             $points_2d = '';
             $r         = ($this->_colour >> 16) & 0xFF;
@@ -1789,8 +1897,14 @@
             return $comment . '<polygon points="' . $points_2d . '" style="fill:rgba(' . $r . ',' . $g . ',' . $b . ',' . $vR . ')" />' . "\n";
         }
 
+        /**
+         * @param $image
+         * @param $minX
+         * @param $minY
+         * @param $ratio
+         */
         public function addPngPolygon(&$image, $minX, $minY, $ratio) {
-            $points_2d = array();
+            $points_2d = [];
             $nb_points = 0;
             $r         = ($this->_colour >> 16) & 0xFF;
             $g         = ($this->_colour >> 8) & 0xFF;
@@ -1825,6 +1939,9 @@
             }
         }
 
+        /**
+         * @return bool
+         */
         public function isProjected() {
             return $this->_isProjected;
         }
@@ -1838,6 +1955,15 @@
             $this->_isProjected = true;
         }
 
+        /**
+         * @param $dx
+         * @param $dy
+         * @param $dz
+         * @param $cos_alpha
+         * @param $sin_alpha
+         * @param $cos_omega
+         * @param $sin_omega
+         */
         public function preProject($dx, $dy, $dz, $cos_alpha, $sin_alpha, $cos_omega, $sin_omega) {
             foreach ($this->_dots as &$dot) {
                 $dot->preProject($dx, $dy, $dz, $cos_alpha, $sin_alpha, $cos_omega, $sin_omega);

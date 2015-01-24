@@ -1,10 +1,9 @@
 <?php
-   /**
-   * @author Max Korlaar
-   * Get a GIF of a rotating Minecraft skin. Uses the moreMCavatar class.
-   * Requests data from GET and creates a new moreMCavatar instance, which will do the rest of it.
-   */
-    ini_set('display_errors', 1); // My webserver defaults to false.
+    /**
+     * @author Max Korlaar
+     * Get a GIF of a rotating Minecraft skin. Uses the moreMCavatar class.
+     * Requests data from GET and creates a new moreMCavatar instance, which will do the rest of it.
+     */
     require_once('includes/moreMCavatar.php');
     $avatar = new moreMCavatar();
     if (!isset($_GET['username'])) {
@@ -18,7 +17,6 @@
     if ($size > 25) { // If you have a load of resources on your server or whatever, you may increase this maximum size.
         die("Sizes greater than 25 are not allowed right now.");
     }
-
     $speed    = 3;
     $rotation = 5;
     if (isset($_GET['speed'])) {
