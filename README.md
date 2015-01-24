@@ -1,5 +1,5 @@
 # mc-3dskin
-_Everything in this branch will be periodically testing website_
+_Everything in this branch will be periodically uploaded to the testing website_
 
 
 ![http://hypixel.maxkorlaar.com/other/get-3d-skin/MegaMaxsterful/13](http://hypixel.maxkorlaar.com/other/get-3d-skin/MegaMaxsterful/13)
