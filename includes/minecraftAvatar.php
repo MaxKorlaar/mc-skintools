@@ -126,7 +126,7 @@
         /**
          * @param      $username
          * @param int  $size
-         * Always use getFromCache
+         * Always use getFromCache, because that's way more resource friendly etc. You get the message :)
          * @param bool $helm
          *
          * @return string
