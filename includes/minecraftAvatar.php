@@ -3,18 +3,18 @@
     /**
      * Class MCavatar
      * Modified source code made into class
-     * @author Max Korlaar
+     *
+     * @author      Max Korlaar
      * @description Class to make it easier to get Minecraft skins.
-     * @license MIT
-     *
-     * Some code was borrowed from an old opensource github project, which was not
-     * working very well.
-     * TODO Find old URL
-     * Class made by Max Korlaar.
-     *
-     */
+     * @license     MIT
+     *              Some code was borrowed from an old opensource github project, which was not
+     *              working very well.
+     *              TODO Find old URL
+     *              Class made by Max Korlaar.
 
-    class MCavatar {
+     */
+    class MCavatar
+    {
         public $name;
         public $skinurl;
         public $size;
@@ -26,9 +26,10 @@
         /**
          * Defines url
          */
-        function __construct() {
+        function __construct()
+        {
             $this->skinurl   = 'http://skins.minecraft.net/MinecraftSkins/';
-            $this->imagepath = $_SERVER['DOCUMENT_ROOT'] . '/img/';
+            $this->imagepath = $_SERVER['DOCUMENT_ROOT'] . '/status-sig/img/';
         }
 
         /**
@@ -37,15 +38,16 @@
          *
          * @return resource|string
          */
-        private function getSkin($username, $save = false) {
-            $src = @imagecreatefrompng($this->skinurl . "{$username}.png");
+        private function getSkin($username, $save = false)
+        {
+            $src = @imagecreatefrompng($this->skinurl . strtolower($username) . ".png");
             if (!$src) {
                 $src = imagecreatefrompng("http://www.minecraft.net/skin/char.png");
             }
             imageAlphaBlending($src, true);
             imageSaveAlpha($src, true);
             if ($save) {
-                $imagepath = $this->imagepath . 'full_skin/' . $username . '.png';
+                $imagepath = $this->imagepath . 'full_skin/' . strtolower($username) . '.png';
                 if (!file_exists($this->imagepath . 'full_skin/')) {
                     mkdir($this->imagepath . 'full_skin/', 0777, true);
                 }
@@ -62,9 +64,10 @@
          *
          * @return string
          */
-        public function getSkinFromCache($username, $save = false) {
-            $imagepath       = $this->imagepath . 'full_skin/' . $username . '.png';
-            $this->publicurl = '/img/full_skin/' . $username . '.png';
+        public function getSkinFromCache($username, $save = false)
+        {
+            $imagepath       = $this->imagepath . 'full_skin/' . strtolower($username) . '.png';
+            $this->publicurl = '/img/full_skin/' . strtolower($username) . '.png';
 
             if (file_exists($imagepath)) {
                 if (filemtime($imagepath) < strtotime('-2 week')) {
@@ -92,13 +95,14 @@
          * @usage getFromCache('MegaMaxsterful');
          * @return string
          */
-        function getFromCache($username, $size = 100, $helm = true) {
+        function getFromCache($username, $size = 100, $helm = true)
+        {
             if ($helm) {
-                $imagepath       = $this->imagepath . $size . 'px/' . $username . '.png';
-                $this->publicurl = '/img/' . $size . 'px/' . $username . '.png';
+                $imagepath       = $this->imagepath . $size . 'px/' . strtolower($username) . '.png';
+                $this->publicurl = '/img/' . $size . 'px/' . strtolower($username) . '.png';
             } else {
-                $imagepath       = $this->imagepath . $size . 'px-no-helm/' . $username . '.png';
-                $this->publicurl = '/img/' . $size . 'px-no-helm/' . $username . '.png';
+                $imagepath       = $this->imagepath . $size . 'px-no-helm/' . strtolower($username) . '.png';
+                $this->publicurl = '/img/' . $size . 'px-no-helm/' . strtolower($username) . '.png';
             }
             $this->name = $username;
             $this->size = $size;
@@ -127,13 +131,14 @@
          *
          * @return string
          */
-        function getImage($username, $size = 100, $helm = true) {
+        function getImage($username, $size = 100, $helm = true)
+        {
             $this->name = $username;
             $this->size = $size;
             if ($helm) {
-                $this->publicurl = '/img/' . $size . 'px/' . $username . '.png';
+                $this->publicurl = '/img/' . $size . 'px/' . strtolower($username) . '.png';
             } else {
-                $this->publicurl = '/img/' . $size . 'px-no-helm/' . $username . '.png';
+                $this->publicurl = '/img/' . $size . 'px-no-helm/' . strtolower($username) . '.png';
             }
             $src = @imagecreatefrompng("http://skins.minecraft.net/MinecraftSkins/{$username}.png");
             if (!$src) {
@@ -165,12 +170,12 @@
                 if (!file_exists($this->imagepath . $size . 'px/')) {
                     mkdir($this->imagepath . $size . 'px/', 0777, true);
                 }
-                $imagepath = $this->imagepath . $size . 'px/' . $username . '.png';
+                $imagepath = $this->imagepath . $size . 'px/' . strtolower($username) . '.png';
             } else {
                 if (!file_exists($this->imagepath . $size . 'px-no-helm/')) {
                     mkdir($this->imagepath . $size . 'px-no-helm/', 0777, true);
                 }
-                $imagepath = $this->imagepath . $size . 'px-no-helm/' . $username . '.png';
+                $imagepath = $this->imagepath . $size . 'px-no-helm/' . strtolower($username) . '.png';
             }
 
             imagepng($final, $imagepath);
@@ -180,14 +185,16 @@
         /**
          * @return mixed
          */
-        public function getName() {
+        public function getName()
+        {
             return $this->name;
         }
 
         /**
          * @param mixed $name
          */
-        public function setName($name) {
+        public function setName($name)
+        {
             $this->name = $name;
         }
     }

@@ -7,10 +7,12 @@
 
     /**
      * Class moreMCavatar
-     * @author Max Korlaar
+     *
+     * @author  Max Korlaar
      * @license MIT
      */
-    class moreMCavatar extends MCavatar {
+    class moreMCavatar extends MCavatar
+    {
         public $images;
         public $username;
         public $headOnly;
@@ -33,7 +35,8 @@
          *
          * @return bool|resource|string
          */
-        public function getRotatingSkinFromCache($username, $size = 2, $speed = 3, $rotation = 5, $headOnly = false, $helmet = true, $layers = false, $return = 'binary') {
+        public function getRotatingSkinFromCache($username, $size = 2, $speed = 3, $rotation = 5, $headOnly = false, $helmet = true, $layers = false, $return = 'binary')
+        {
 
             if ($layers) {
                 $l = '-withlayers';
@@ -46,7 +49,7 @@
                 $this->publicurl = '/img/rotate_gif/' . strtolower($username) . "-{$size}x-{$speed}s-{$rotation}fms{$l}.gif";
             } else {
                 $imagepath       = $this->imagepath . 'rotate_gif/' . strtolower($username) . "-{$size}x{$l}.gif";
-                $this->publicurl = '/img/rotate_gif/' . strtolower($username) . '.gif';
+                $this->publicurl = '/img/rotate_gif/' . strtolower($username) . "-{$size}x{$l}.gif";
             }
             $this->filepath = $imagepath;
 
@@ -61,6 +64,7 @@
 
                 } else {
                     $this->cacheInfo = '3d full skin image exists and OK';
+                    if (isset($_GET['db'])) echo 'file exists and OK';
                     if ($return == 'binary') {
                         return file_get_contents($imagepath);
                     }
@@ -75,6 +79,8 @@
 
                 }
             } else {
+                if (isset($_GET['db'])) echo 'file not found!';
+                if (isset($_GET['db'])) echo ' filename: ' . $imagepath;
                 $this->cacheInfo = '3d full skin image not yet downloaded';
                 if ($return == 'binary') {
                     return $this->getRotatingSkin($username, $size, $speed, $rotation, $headOnly, $helmet, $layers, 'save-binary');
@@ -96,7 +102,8 @@
          * @internal param int $rotation
          * @return bool|resource|string
          */
-        function getRotatingSkin($username, $size = 2, $speed = 3, $frames = 5, $headOnly = false, $helmet = true, $layers = false, $return = 'binary') {
+        function getRotatingSkin($username, $size = 2, $speed = 3, $frames = 5, $headOnly = false, $helmet = true, $layers = false, $return = 'binary')
+        {
             $this->images   = [];
             $this->username = $username;
             $this->size     = $size;
@@ -113,7 +120,6 @@
                     $angle = $angle * -1;
                 }
                 $player = new render3DPlayer($this->username, '0', $angle, '0', '0', '0', '0', '0', "{$this->helmet}", "{$this->headOnly}", 'png', $this->size, 'false', $this->layers);
-                //render3DPlayer(user, vr, hr, hrh, vrll, vrrl, vrla, vrra, displayHair, headOnly, format, ratio, aa, layers);
                 array_push($this->images, $player->get3DRender());
             };
 
@@ -145,7 +151,9 @@
                 } else {
                     $l = '';
                 }
-
+                if ($this->invert) {
+                    $frames = $frames * -1;
+                }
                 if ($speed != 3 || $frames != 5) {
                     $imagepath       = $this->imagepath . 'rotate_gif/' . strtolower($username) . "-{$size}x-{$speed}s-{$frames}fms{$l}.gif";
                     $this->publicurl = '/img/rotate_gif/' . strtolower($username) . "-{$size}x-{$speed}s-{$frames}fms{$l}.gif";
@@ -179,7 +187,8 @@
          *
          * @return resource
          */
-        function getThreeDSkinFromCache($username, $size = 2, $angle = 0, $headOnly = false, $helmet = true, $layers = false) {
+        function getThreeDSkinFromCache($username, $size = 2, $angle = 0, $headOnly = false, $helmet = true, $layers = false)
+        {
             if ($headOnly) {
                 $h = '-head';
             } else {
@@ -196,7 +205,7 @@
                 $l = '';
             }
             $imagepath       = $this->imagepath . '3d/' . strtolower($username) . "-{$size}x-{$angle}{$h}{$nh}{$l}.png";
-            $this->publicurl = '/img/3d/' . $username . "-{$size}x-{$angle}{$h}{$nh}{$l}.png";
+            $this->publicurl = '/img/3d/' . strtolower($username) . "-{$size}x-{$angle}{$h}{$nh}{$l}.png";
 
             if (file_exists($imagepath)) {
                 if (filemtime($imagepath) < strtotime('-2 week')) {
@@ -228,13 +237,15 @@
          *
          * @return resource|string
          */
-        private function getThreeDSkin($username, $size = 2, $angle = 0, $headOnly = false, $helmet = true, $layers = false) {
+        private function getThreeDSkin($username, $size = 2, $angle = 0, $headOnly = false, $helmet = true, $layers = false)
+        {
             $this->username = $username;
             $this->size     = $size;
             $this->headOnly = $headOnly;
             $this->helmet   = $helmet;
             $this->layers   = $layers;
             $player         = new render3DPlayer($this->username, '0', $angle, '0', '0', '0', '0', '0', $this->helmet, $this->headOnly, 'png', $this->size, 'false', $this->layers);
+            //render3DPlayer(user, vr, hr, hrh, vrll, vrrl, vrla, vrra, displayHair, headOnly, format, ratio, aa, layers);
             return $player->get3DRender();
         }
 
