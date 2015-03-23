@@ -2,6 +2,9 @@
 _Everything in this branch will be periodically uploaded to the testing website_
 
 
+This project is also used in the Dynamic Do It Yourself Signatures project. For more info, view our Github.
+
+
 ![http://hypixel.maxkorlaar.com/other/get-3d-skin/MegaMaxsterful/13](http://hypixel.maxkorlaar.com/other/get-3d-skin/MegaMaxsterful/13)
 
 
