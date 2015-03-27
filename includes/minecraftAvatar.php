@@ -1,4 +1,5 @@
 <?php
+    require_once('MojangAPI.php');
 
     /**
      * Class MCavatar
@@ -140,10 +141,28 @@
             } else {
                 $this->publicurl = '/img/' . $size . 'px-no-helm/' . strtolower($username) . '.png';
             }
-            $src = @imagecreatefrompng("http://skins.minecraft.net/MinecraftSkins/{$username}.png");
-            if (!$src) {
-                $src = imagecreatefrompng("http://www.minecraft.net/skin/char.png");
+
+            if (strlen($username) === 32) {
+                $api  = new MojangAPI();
+                $data = $api->getProfile($username);
+                if ($data['success'] === true) {
+                    $skinData = $data['data'];
+                    if ($skinData['skinURL'] === null) {
+                        $imgURL = $skinData['isSteve'] ? 'https://minecraft.net/images/steve.png' : 'https://minecraft.net/images/alex.png';
+                    } else {
+                        $imgURL = $skinData['skinURL'];
+                    }
+                    $src = imagecreatefrompng($imgURL);
+                } else {
+                    $src = imagecreatefrompng("http://www.minecraft.net/skin/char.png");
+                }
+            } else {
+                $src = @imagecreatefrompng("http://skins.minecraft.net/MinecraftSkins/{$username}.png");
+                if (!$src) {
+                    $src = imagecreatefrompng("http://www.minecraft.net/skin/char.png");
+                }
             }
+
             $dest = imagecreatetruecolor(8, 8);
             imagecopy($dest, $src, 0, 0, 8, 8, 8, 8);
             if ($helm) {
