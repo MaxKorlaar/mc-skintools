@@ -41,9 +41,25 @@
          */
         private function getSkin($username, $save = false)
         {
-            $src = @imagecreatefrompng($this->skinurl . strtolower($username) . ".png");
-            if (!$src) {
-                $src = imagecreatefrompng("http://www.minecraft.net/skin/char.png");
+            if (strlen($username) === 32) {
+                $api  = new MojangAPI();
+                $data = $api->getProfile($username);
+                if ($data['success'] === true) {
+                    $skinData = $data['data'];
+                    if ($skinData['skinURL'] === null) {
+                        $imgURL = $skinData['isSteve'] ? 'https://minecraft.net/images/steve.png' : 'https://minecraft.net/images/alex.png';
+                    } else {
+                        $imgURL = $skinData['skinURL'];
+                    }
+                    $src = imagecreatefrompng($imgURL);
+                } else {
+                    $src = imagecreatefrompng("http://www.minecraft.net/skin/char.png");
+                }
+            } else {
+                $src = @imagecreatefrompng("http://skins.minecraft.net/MinecraftSkins/{$username}.png");
+                if (!$src) {
+                    $src = imagecreatefrompng("http://www.minecraft.net/skin/char.png");
+                }
             }
             imageAlphaBlending($src, true);
             imageSaveAlpha($src, true);
