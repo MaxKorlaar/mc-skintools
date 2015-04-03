@@ -23,6 +23,7 @@
         public $cacheInfo;
         public $publicurl;
         public $helm = true;
+        public $fetchError = null;
 
         /**
          * Defines url
@@ -52,13 +53,22 @@
                         $imgURL = $skinData['skinURL'];
                     }
                     $src = imagecreatefrompng($imgURL);
+                    if (!$src) {
+                        $src              = imagecreatefrompng("http://www.minecraft.net/skin/char.png");
+                        $save             = false;
+                        $this->fetchError = true;
+                    }
                 } else {
-                    $src = imagecreatefrompng("http://www.minecraft.net/skin/char.png");
+                    $src              = imagecreatefrompng("http://www.minecraft.net/skin/char.png");
+                    $this->fetchError = true;
+                    $save             = false;
                 }
             } else {
                 $src = @imagecreatefrompng("http://skins.minecraft.net/MinecraftSkins/{$username}.png");
                 if (!$src) {
-                    $src = imagecreatefrompng("http://www.minecraft.net/skin/char.png");
+                    $src              = imagecreatefrompng("http://www.minecraft.net/skin/char.png");
+                    $this->fetchError = true;
+                    $save             = false;
                 }
             }
             imageAlphaBlending($src, true);
@@ -92,11 +102,7 @@
                     unlink($imagepath);
                     return $this->getSkin($username, true);
                 } else {
-                    if ($save) {
-                        return $imagepath;
-                    } else {
-                        return $imagepath;
-                    }
+                    return $imagepath;
                 }
             } else {
                 $this->cacheInfo = 'full skin image not yet downloaded';
@@ -124,6 +130,7 @@
             $this->name = $username;
             $this->size = $size;
             $this->helm = $helm;
+
             if (file_exists($imagepath)) {
                 if (filemtime($imagepath) < strtotime('-2 week')) {
                     $this->cacheInfo = 'expired, redownloading';
@@ -145,10 +152,11 @@
          * @param int  $size
          * Always use getFromCache, because that's way more resource friendly etc. You get the message :)
          * @param bool $helm
+         * @param bool $save
          *
-         * @return string
+*@return string
          */
-        function getImage($username, $size = 100, $helm = true)
+        function getImage($username, $size = 100, $helm = true, $save = true)
         {
             $this->name = $username;
             $this->size = $size;
@@ -169,13 +177,22 @@
                         $imgURL = $skinData['skinURL'];
                     }
                     $src = imagecreatefrompng($imgURL);
+                    if (!$src) {
+                        $src              = imagecreatefrompng("http://www.minecraft.net/skin/char.png");
+                        $this->fetchError = true;
+                        $save             = false;
+                    }
                 } else {
-                    $src = imagecreatefrompng("http://www.minecraft.net/skin/char.png");
+                    $src              = imagecreatefrompng("http://www.minecraft.net/skin/char.png");
+                    $this->fetchError = true;
+                    $save             = false;
                 }
             } else {
                 $src = @imagecreatefrompng("http://skins.minecraft.net/MinecraftSkins/{$username}.png");
                 if (!$src) {
-                    $src = imagecreatefrompng("http://www.minecraft.net/skin/char.png");
+                    $src              = imagecreatefrompng("http://www.minecraft.net/skin/char.png");
+                    $this->fetchError = true;
+                    $save             = false;
                 }
             }
 
@@ -213,7 +230,7 @@
                 $imagepath = $this->imagepath . $size . 'px-no-helm/' . strtolower($username) . '.png';
             }
 
-            imagepng($final, $imagepath);
+            if ($save) imagepng($final, $imagepath);
             return $imagepath;
         }
 

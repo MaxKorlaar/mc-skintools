@@ -41,7 +41,8 @@
     /**
      * Class render3DPlayer
      */
-    class render3DPlayer {
+    class render3DPlayer
+    {
         private $fallback_img = 'http://www.minecraft.net/skin/char.png'; // Use a not found skin whenever something goes wrong.
         private $playerName = null;
         private $playerSkin = false;
@@ -77,7 +78,7 @@
 
         private $polygons = null;
 
-        private $times = null;
+        public $fetchError = null;
 
         /**
          * @param $user
@@ -95,7 +96,8 @@
          * @param $aa
          * @param $layers
          */
-        public function __construct($user, $vr, $hr, $hrh, $vrll, $vrrl, $vrla, $vrra, $displayHair, $headOnly, $format, $ratio, $aa, $layers) {
+        public function __construct($user, $vr, $hr, $hrh, $vrll, $vrrl, $vrla, $vrra, $displayHair, $headOnly, $format, $ratio, $aa, $layers)
+        {
             $this->playerName   = $user;
             $this->vR           = $vr;
             $this->hR           = $hr;
@@ -119,7 +121,8 @@
          *
          * @return true or false
          */
-        private function isUUID($candidate) {
+        private function isUUID($candidate)
+        {
             return preg_match('/^[0-9A-Za-z]{8}(-[0-9A-Za-z]{4}){3}-[0-9A-Za-z]{12}$/', $candidate);
         }
 
@@ -133,7 +136,8 @@
          *
          * @return bool
          */
-        private function getSkinURLViaUUIDViaMojang($UUID) {
+        private function getSkinURLViaUUIDViaMojang($UUID)
+        {
             $convertedUUID        = str_replace('-', '', $UUID);
             $mojangServiceContent = file_get_contents('https://sessionserver.mojang.com/session/minecraft/profile/' . $convertedUUID);
             $contentArray         = json_decode($mojangServiceContent, true);
@@ -172,7 +176,8 @@
         /**
          * @return bool|string
          */
-        private function getSkinURL() {
+        private function getSkinURL()
+        {
             if ($this->isUUID($this->playerName)) {
                 $result = $this->getSkinURLViaUUIDViaMojang($this->playerName);
 
@@ -189,7 +194,8 @@
         /**
          * @return bool
          */
-        private function getPlayerSkin() {
+        private function getPlayerSkin()
+        {
             if (trim($this->playerName) == '') {
                 $this->playerSkin = imageCreateFromPng($this->fallback_img);
                 return false;
@@ -199,6 +205,7 @@
                 if ($skinURL !== false) {
                     $this->playerSkin = @imageCreateFromPng($skinURL);
                 }
+                if ($MCa->fetchError === true) $this->fetchError = true;
             }
 
             if (!$this->playerSkin) {
@@ -216,15 +223,12 @@
             return true;
         }
 
-        /* Function renders the 3d image
-         *
-         */
-        /**
-         * @param string $output
+        /** Function renders the 3d image
          *
          * @return resource|string
          */
-        public function get3DRender($output = 'return') {
+        public function get3DRender()
+        {
             global $minX, $maxX, $minY, $maxY;
 
             $this->getPlayerSkin(); // Downlaod and check the player skin
@@ -250,11 +254,8 @@
             $this->generatePolygons();
             $this->memberRotation();
             $this->createProjectionPlan();
-            $result        = $this->displayImage($output);
-
-            if ($output == 'return') {
-                return $result;
-            }
+            $result = $this->displayImage('return');
+            return $result;
 
         }
 
@@ -262,7 +263,8 @@
          *
          * Espects an tru color image.
          */
-        private function makeBackgroundTransparent() {
+        private function makeBackgroundTransparent()
+        {
             // check if the corner box is one solid color
             $tempValue  = null;
             $needRemove = true;
@@ -343,7 +345,8 @@
         /**
          * @return bool
          */
-        private function cropToOldSkinFormat() {
+        private function cropToOldSkinFormat()
+        {
             if (imagesx($this->playerSkin) !== imagesy($this->playerSkin)) {
                 return $this->playerSkin;
             }
@@ -364,7 +367,8 @@
          * Espects an image.
          * Returns a croped image.
          */
-        private function fixNewSkinTypeLayers() {
+        private function fixNewSkinTypeLayers()
+        {
             if (!$this->isNewSkinType) {
                 return;
             }
@@ -377,7 +381,8 @@
         /* Function Calculates the angels
          *
          */
-        private function calculateAngles() {
+        private function calculateAngles()
+        {
             global $cos_alpha, $sin_alpha, $cos_omega, $sin_omega;
             global $minX, $maxX, $minY, $maxY;
 
@@ -391,7 +396,7 @@
             $cos_omega = cos($this->omega);
             $sin_omega = sin($this->omega);
 
-            $this->members_angles['torso']    = [
+            $this->members_angles['torso']   = [
                 'cos_alpha' => cos(0),
                 'sin_alpha' => sin(0),
                 'cos_omega' => cos(0),
@@ -400,7 +405,7 @@
 
             $alpha_head                   = 0;
             $omega_head                   = deg2rad($this->hrh);
-            $this->members_angles['head']     = $this->members_angles['helmet'] = [ // Head and helmet get the same calculations
+            $this->members_angles['head']    = $this->members_angles['helmet'] = [ // Head and helmet get the same calculations
                 'cos_alpha' => cos($alpha_head),
                 'sin_alpha' => sin($alpha_head),
                 'cos_omega' => cos($omega_head),
@@ -418,7 +423,7 @@
 
             $alpha_left_arm                  = deg2rad($this->vrla);
             $omega_left_arm                  = 0;
-            $this->members_angles['leftArm']  = [
+            $this->members_angles['leftArm'] = [
                 'cos_alpha' => cos($alpha_left_arm),
                 'sin_alpha' => sin($alpha_left_arm),
                 'cos_omega' => cos($omega_left_arm),
@@ -436,7 +441,7 @@
 
             $alpha_left_leg                  = deg2rad($this->vrll);
             $omega_left_leg                  = 0;
-            $this->members_angles['leftLeg']  = [
+            $this->members_angles['leftLeg'] = [
                 'cos_alpha' => cos($alpha_left_leg),
                 'sin_alpha' => sin($alpha_left_leg),
                 'cos_omega' => cos($omega_left_leg),
@@ -451,7 +456,8 @@
         /* Function determinates faces
          *
          */
-        private function facesDetermination() {
+        private function facesDetermination()
+        {
             $this->visible_faces_format = [
                 'front' => [],
                 'back'  => []
@@ -520,7 +526,8 @@
         /* Function sets all cube points
          *
          */
-        private function setCubePoints() {
+        private function setCubePoints()
+        {
             $this->cube_points   = [];
             $this->cube_points[] = [
                 new Point([
@@ -614,7 +621,8 @@
         /* Function generates polygons
          *
          */
-        private function generatePolygons() {
+        private function generatePolygons()
+        {
             $depths_of_face   = [];
             $this->polygons   = [];
             $cube_faces_array = ['front'  => [],
@@ -625,13 +633,13 @@
                                  'left'   => []
             ];
 
-            $this->polygons = ['helmet'        => $cube_faces_array,
-                                    'head'     => $cube_faces_array,
-                                    'torso'    => $cube_faces_array,
-                                    'rightArm' => $cube_faces_array,
-                                    'leftArm'  => $cube_faces_array,
-                                    'rightLeg' => $cube_faces_array,
-                                    'leftLeg'  => $cube_faces_array
+            $this->polygons = ['helmet'   => $cube_faces_array,
+                               'head'     => $cube_faces_array,
+                               'torso'    => $cube_faces_array,
+                               'rightArm' => $cube_faces_array,
+                               'leftArm'  => $cube_faces_array,
+                               'rightLeg' => $cube_faces_array,
+                               'leftLeg'  => $cube_faces_array
             ];
 
             $hd_ratio = $this->hd_ratio;
@@ -1421,7 +1429,8 @@
         /* Function rotates members
          *
          */
-        private function memberRotation() {
+        private function memberRotation()
+        {
             foreach ($this->polygons['head'] as $face) {
                 foreach ($face as $poly) {
                     $poly->preProject(4, 8, 2, $this->members_angles['head']['cos_alpha'], $this->members_angles['head']['sin_alpha'], $this->members_angles['head']['cos_omega'], $this->members_angles['head']['sin_omega']);
@@ -1463,7 +1472,8 @@
         /* Create projection plan
          *
          */
-        private function createProjectionPlan() {
+        private function createProjectionPlan()
+        {
             foreach ($this->polygons as $piece) {
                 foreach ($piece as $face) {
                     foreach ($face as $poly) {
@@ -1483,15 +1493,16 @@
          *
          * @return resource|string
          */
-        private function displayImage($output) {
+        private function displayImage($output)
+        {
             global $minX, $maxX, $minY, $maxY;
             global $seconds_to_cache;
 
             $width  = $maxX - $minX;
             $height = $maxY - $minY;
             $ratio  = $this->ratio;
-            if ($ratio < 2) {
-                $ratio = 2;
+            if ($ratio <= 0) {
+                $ratio = 1;
             }
 
             if ($this->aa === true) {
@@ -1578,7 +1589,8 @@
         /**
          * @return array
          */
-        private function getDisplayOrder() {
+        private function getDisplayOrder()
+        {
             $display_order = [];
             if (in_array('top', $this->front_faces)) {
                 if (in_array('right', $this->front_faces)) {
@@ -1652,11 +1664,13 @@
     /**
      * Class img
      */
-    class img {
+    class img
+    {
         /**
          *
          */
-        private function __construct() {
+        private function __construct()
+        {
         }
 
         /* Function creates a blank canvas
@@ -1672,7 +1686,8 @@
          *
          * @return resource
          */
-        public static function createEmptyCanvas($w, $h) {
+        public static function createEmptyCanvas($w, $h)
+        {
             $dst = imagecreatetruecolor($w, $h);
             if (true) {
 
@@ -1691,7 +1706,6 @@
                 imagefill($dst, 0, 0, $trans_colour);
             }
 
-
             return $dst;
         }
 
@@ -1706,7 +1720,8 @@
          *
          * @return resource
          */
-        public static function convertToTrueColor($img) {
+        public static function convertToTrueColor($img)
+        {
             if (imageistruecolor($img)) {
                 return $img;
             }
@@ -1727,7 +1742,8 @@
     /**
      * Class Point
      */
-    class Point {
+    class Point
+    {
         private $_originCoord;
         private $_destCoord = [];
         private $_isProjected = false;
@@ -1736,7 +1752,8 @@
         /**
          * @param $originCoord
          */
-        public function __construct($originCoord) {
+        public function __construct($originCoord)
+        {
             if (is_array($originCoord) && count($originCoord) == 3) {
                 $this->_originCoord = [
                     'x' => (isset($originCoord['x']) ? $originCoord['x'] : 0),
@@ -1752,7 +1769,8 @@
             }
         }
 
-        public function project() {
+        public function project()
+        {
             global $cos_alpha, $sin_alpha, $cos_omega, $sin_omega;
             global $minX, $maxX, $minY, $maxY;
 
@@ -1779,7 +1797,8 @@
          * @param $cos_omega
          * @param $sin_omega
          */
-        public function preProject($dx, $dy, $dz, $cos_alpha, $sin_alpha, $cos_omega, $sin_omega) {
+        public function preProject($dx, $dy, $dz, $cos_alpha, $sin_alpha, $cos_omega, $sin_omega)
+        {
             if (!$this->_isPreProjected) {
                 $x                       = $this->_originCoord['x'] - $dx;
                 $y                       = $this->_originCoord['y'] - $dy;
@@ -1794,18 +1813,21 @@
         /**
          * @return array
          */
-        public function getOriginCoord() {
+        public function getOriginCoord()
+        {
             return $this->_originCoord;
         }
 
         /**
          * @return array
          */
-        public function getDestCoord() {
+        public function getDestCoord()
+        {
             return $this->_destCoord;
         }
 
-        public function getDepth() {
+        public function getDepth()
+        {
             if (!$this->_isProjected) {
                 $this->project();
             }
@@ -1815,7 +1837,8 @@
         /**
          * @return bool
          */
-        public function isProjected() {
+        public function isProjected()
+        {
             return $this->_isProjected;
         }
     }
@@ -1827,7 +1850,8 @@
     /**
      * Class Polygon
      */
-    class Polygon {
+    class Polygon
+    {
         private $_dots;
         private $_colour;
         private $_isProjected = false;
@@ -1838,7 +1862,8 @@
          * @param $dots
          * @param $colour
          */
-        public function __construct($dots, $colour) {
+        public function __construct($dots, $colour)
+        {
             $this->_dots   = $dots;
             $this->_colour = $colour;
             $coord_0       = $dots[0]->getOriginCoord();
@@ -1860,7 +1885,8 @@
         /**
          * @return string
          */
-        private function getFace() {
+        private function getFace()
+        {
             return $this->_face;
         }
 
@@ -1868,7 +1894,8 @@
         /**
          * @return int
          */
-        private function getFaceDepth() {
+        private function getFaceDepth()
+        {
             if (!$this->_isProjected) {
                 $this->project();
             }
@@ -1880,7 +1907,8 @@
          *
          * @return string
          */
-        public function getSvgPolygon($ratio) {
+        public function getSvgPolygon($ratio)
+        {
             $points_2d = '';
             $r         = ($this->_colour >> 16) & 0xFF;
             $g         = ($this->_colour >> 8) & 0xFF;
@@ -1903,7 +1931,8 @@
          * @param $minY
          * @param $ratio
          */
-        public function addPngPolygon(&$image, $minX, $minY, $ratio) {
+        public function addPngPolygon(&$image, $minX, $minY, $ratio)
+        {
             $points_2d = [];
             $nb_points = 0;
             $r         = ($this->_colour >> 16) & 0xFF;
@@ -1942,11 +1971,13 @@
         /**
          * @return bool
          */
-        public function isProjected() {
+        public function isProjected()
+        {
             return $this->_isProjected;
         }
 
-        public function project() {
+        public function project()
+        {
             foreach ($this->_dots as &$dot) {
                 if (!$dot->isProjected()) {
                     $dot->project();
@@ -1964,7 +1995,8 @@
          * @param $cos_omega
          * @param $sin_omega
          */
-        public function preProject($dx, $dy, $dz, $cos_alpha, $sin_alpha, $cos_omega, $sin_omega) {
+        public function preProject($dx, $dy, $dz, $cos_alpha, $sin_alpha, $cos_omega, $sin_omega)
+        {
             foreach ($this->_dots as &$dot) {
                 $dot->preProject($dx, $dy, $dz, $cos_alpha, $sin_alpha, $cos_omega, $sin_omega);
             }

@@ -212,7 +212,7 @@
                     $this->cacheInfo = '3d skin expired, redownloading';
                     unlink($imagepath);
                     $image = $this->getThreeDSkin($username, $size, $angle, $headOnly, $helmet, $layers);
-                    imagepng($image, $imagepath);
+                    if ($this->fetchError === null) imagepng($image, $imagepath); // Only cache the image if it's fetched successfully.
                     return $image;
                 } else {
                     $this->cacheInfo = '3d skin image exists and OK';
@@ -222,7 +222,7 @@
                 $this->cacheInfo = '3d skin image not yet downloaded';
 
                 $image = $this->getThreeDSkin($username, $size, $angle, $headOnly, $helmet, $layers);
-                imagepng($image, $imagepath);
+                if ($this->fetchError === null) imagepng($image, $imagepath); // Only cache the image if it's fetched successfully.
                 return $image;
             }
         }
@@ -239,13 +239,13 @@
          */
         private function getThreeDSkin($username, $size = 2, $angle = 0, $headOnly = false, $helmet = true, $layers = false)
         {
-            $this->username = $username;
-            $this->size     = $size;
-            $this->headOnly = $headOnly;
-            $this->helmet   = $helmet;
-            $this->layers   = $layers;
-            $player         = new render3DPlayer($this->username, '0', $angle, '0', '0', '0', '0', '0', $this->helmet, $this->headOnly, 'png', $this->size, 'false', $this->layers);
-            //render3DPlayer(user, vr, hr, hrh, vrll, vrrl, vrla, vrra, displayHair, headOnly, format, ratio, aa, layers);
+            $this->username   = $username;
+            $this->size       = $size;
+            $this->headOnly   = $headOnly;
+            $this->helmet     = $helmet;
+            $this->layers     = $layers;
+            $player           = new render3DPlayer($this->username, '0', $angle, '0', '0', '0', '0', '0', $this->helmet, $this->headOnly, 'png', $this->size, 'false', $this->layers);
+            $this->fetchError = $player->fetchError;
             return $player->get3DRender();
         }
 
