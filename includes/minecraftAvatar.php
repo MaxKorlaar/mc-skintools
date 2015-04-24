@@ -154,12 +154,13 @@
          * @param bool $helm
          * @param bool $save
          *
-*@return string
+         * @return string
          */
         function getImage($username, $size = 100, $helm = true, $save = true)
         {
-            $this->name = $username;
-            $this->size = $size;
+            $this->name  = $username;
+            $this->size  = $size;
+            $defaultSkin = null;
             if ($helm) {
                 $this->publicurl = '/img/' . $size . 'px/' . strtolower($username) . '.png';
             } else {
@@ -179,11 +180,13 @@
                     $src = imagecreatefrompng($imgURL);
                     if (!$src) {
                         $src              = imagecreatefrompng("http://www.minecraft.net/skin/char.png");
+                        $defaultSkin = 'steve';
                         $this->fetchError = true;
                         $save             = false;
                     }
                 } else {
                     $src              = imagecreatefrompng("http://www.minecraft.net/skin/char.png");
+                    $defaultSkin = 'steve';
                     $this->fetchError = true;
                     $save             = false;
                 }
@@ -191,6 +194,7 @@
                 $src = @imagecreatefrompng("http://skins.minecraft.net/MinecraftSkins/{$username}.png");
                 if (!$src) {
                     $src              = imagecreatefrompng("http://www.minecraft.net/skin/char.png");
+                    $defaultSkin = 'steve';
                     $this->fetchError = true;
                     $save             = false;
                 }
@@ -231,6 +235,10 @@
             }
 
             if ($save) imagepng($final, $imagepath);
+            if ($defaultSkin !== null) {
+                $imagepath = $this->imagepath . $size . 'px/' . $defaultSkin . '.png';
+                imagepng($final, $imagepath);
+            }
             return $imagepath;
         }
 
