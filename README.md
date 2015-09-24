@@ -7,7 +7,6 @@ This project is also used in the Dynamic Do It Yourself Signatures project. For 
 
 ![http://hypixel.maxkorlaar.com/other/](http://hypixel.maxkorlaar.com/other/get-3d-skin/3204cdd57d0d485987f1077524d43e05/4)
 
-
 My own scripts plus enhanced versions of some scripts I've found.
 
 More info: hypixel.net/threads/tool-skin-rot8or-generate-gifs.228872/
