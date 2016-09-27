@@ -1,19 +1,15 @@
 # mc-3dskin
-_Everything in this branch will be periodically uploaded to the testing website_
-
-
-This project is also used in the Dynamic Do It Yourself Signatures project. For more info, view our Github.
-
-
 ![http://hypixel.maxkorlaar.com/other/](http://hypixel.maxkorlaar.com/other/get-3d-skin/3204cdd57d0d485987f1077524d43e05/4)
 
-My own scripts plus enhanced versions of some scripts I've found.
+mc-3dskin allows you to easily request Minecraft skins in various formats for your PHP-powered website.
+I personally use it for my website http://hypixel.maxkorlaar.com.
+It's got built-in support for caching the images on your website which, trust me, speeds up things a lot.
+I recommend you to periodically clear your cache folders
+(I forgot to do it for a few months with the aforementioned website, and it stored over a few hundred thousand files).
 
-More info: hypixel.net/threads/tool-skin-rot8or-generate-gifs.228872/
+I've also included my own MojangAPI PHP class which allows you to request a Mojang profile based on an UUID.
+You can use such a profile to request the current username of that profile.
 
-
-I'm currently busy cleaning up my code before I would upload it to here.
-Also, I'm checking all licenses. 
 
 **I have uploaded this so people can take a look at my code and help improve it :smile:. Read LICENSE carefully.**
 (In short: Provide attribution when using this project, and please notify me so I can check out your work)
