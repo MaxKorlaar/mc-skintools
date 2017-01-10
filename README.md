@@ -1,5 +1,4 @@
 # mc-3dskin
-![http://hypixel.maxkorlaar.com/other/](http://hypixel.maxkorlaar.com/other/get-3d-skin/3204cdd57d0d485987f1077524d43e05/4)
 
 mc-3dskin allows you to easily request Minecraft skins in various formats for your PHP-powered website.
 I personally use it for my website http://hypixel.maxkorlaar.com.

@@ -83,20 +83,22 @@ class render3DPlayer
     public $fetchURL = null;
 
     /**
-     * @param $user
-     * @param $vr
-     * @param $hr
-     * @param $hrh
-     * @param $vrll
-     * @param $vrrl
-     * @param $vrla
-     * @param $vrra
-     * @param $displayHair
-     * @param $headOnly
-     * @param $format
-     * @param $ratio
-     * @param $aa
-     * @param $layers
+     * @param      $user
+     * @param      $vr
+     * @param      $hr
+     * @param      $hrh
+     * @param      $vrll
+     * @param      $vrrl
+     * @param      $vrla
+     * @param      $vrra
+     * @param      $displayHair
+     * @param      $headOnly
+     * @param      $format
+     * @param      $ratio
+     * @param      $aa
+     * @param      $layers
+     * @param bool $debug
+     * @param bool $cache
      */
     public function __construct($user, $vr, $hr, $hrh, $vrll, $vrrl, $vrla, $vrra, $displayHair, $headOnly, $format, $ratio, $aa, $layers, $debug = false, $cache = true)
     {
@@ -113,7 +115,7 @@ class render3DPlayer
         $this->format = $format;
         $this->ratio = $ratio;
         $this->aa = ($aa == 'true');
-        $this->layers = ($layers == 'true');
+        $this->layers = $layers;
         $this->debug = $debug;
         $this->cache = $cache;
     }
